@@ -11,7 +11,7 @@ public class MJWTest2 extends TestbedTest {
 
 	@Override
 	public void initTest(boolean argDeserialized) {
-		setTitle("Couple of Things Test");
+		setTitle("Super Couple of Things Test");
 		getWorld().setGravity(new Vec2(0f, 0f));
 		for (int i = 0; i < 1; i++) {
 			PolygonShape polygonShape = new PolygonShape();
