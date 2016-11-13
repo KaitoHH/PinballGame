@@ -10,23 +10,31 @@ import java.awt.*;
  */
 public class GameWindow {
     private JPanel panel1;
+    private JButton button1;
+    private JButton button2;
     private JButton playButton;
     private JPanel paintBoard;
+    private JToolBar menu;
     private JPanel toolMenu;
-    private JButton button12;
     private JPanel panelC;
 
-    public GameWindow() {
-        panelC.setLayout(new BorderLayout());
-        panelC.add(new toolBoxPanel(),BorderLayout.CENTER);
+    public static void main(String[] args) {
+        new GameWindow();
     }
 
-    public static void main(String[] args) {
+    public GameWindow() {
+        GraphPanel graphpanel = new GraphPanel();
+        paintBoard.setLayout(new BorderLayout());
+        paintBoard.add(graphpanel, BorderLayout.CENTER);
+
+        panelC.setLayout(new BorderLayout());
+        panelC.add(new toolBoxPanel(),BorderLayout.CENTER);
+
         JFrame frame = new JFrame("GameWindow");
-        frame.setSize(800,800);
-        frame.setContentPane(new GameWindow().panel1);
+        frame.setJMenuBar(new GameMenu());
+        frame.setSize(700, 500);
+        frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        //frame.setLayout(null);
     }
 }
