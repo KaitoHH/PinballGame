@@ -14,4 +14,12 @@ public class GameWindow {
 	private JPanel paintBoard;
 	private JToolBar menu;
 	private JPanel toolMenu;
+
+	public static void main(String[] args) {
+		JFrame frame = new JFrame("GameWindow");
+		frame.setContentPane(new GameWindow().panel1);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.pack();
+		frame.setVisible(true);
+	}
 }
