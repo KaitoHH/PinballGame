@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Project: PinballGame
@@ -8,18 +9,24 @@ import javax.swing.*;
  * All rights reserved.
  */
 public class GameWindow {
-	private JPanel panel1;
-	private JButton button1;
-	private JButton button2;
-	private JPanel paintBoard;
-	private JToolBar menu;
-	private JPanel toolMenu;
+    private JPanel panel1;
+    private JButton playButton;
+    private JPanel paintBoard;
+    private JPanel toolMenu;
+    private JButton button12;
+    private JPanel panelC;
 
-	public static void main(String[] args) {
-		JFrame frame = new JFrame("GameWindow");
-		frame.setContentPane(new GameWindow().panel1);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
-	}
+    public GameWindow() {
+        panelC.setLayout(new BorderLayout());
+        panelC.add(new toolBoxPanel(),BorderLayout.CENTER);
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("GameWindow");
+        frame.setSize(800,800);
+        frame.setContentPane(new GameWindow().panel1);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+        //frame.setLayout(null);
+    }
 }
