@@ -14,19 +14,9 @@ import javax.swing.*;
 public class Test {
 	public static void main(String[] args) {
 		TestbedModel model = new TestbedModel();         // create our model
-
-// add tests
-		TestList.populateModel(model);                   // populate the provided testbed tests
-		model.addCategory("My SuperSuper Tests");             // add a category
-		model.addTest(new MJWTest2());                // add our test
-
-// add our custom setting "My Range Setting", with a default value of 10, between 0 and 20
-		//model.getSettings().addSetting(new TestbedSetting("My Range Setting", TestbedSetting.SettingType.ENGINE, 10, 0, 20));
-
+		model.addTest(new MJWTest2());                   // add our test
 		TestbedPanel panel = new TestPanelJ2D(model);    // create our testbed panel
-
-		JFrame testbed = new TestbedFrame(model, panel, TestbedController.UpdateBehavior.UPDATE_CALLED); // put both into our testbed frame
-// etc
+		JFrame testbed = new MyFrame(model, panel, TestbedController.UpdateBehavior.UPDATE_CALLED); // put both into our testbed frame
 		testbed.setVisible(true);
 		testbed.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
