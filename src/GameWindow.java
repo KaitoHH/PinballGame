@@ -23,16 +23,14 @@ public class GameWindow {
     }
 
     public GameWindow() {
-        GraphPanel graphpanel = new GraphPanel();
         paintBoard.setLayout(new BorderLayout());
-        paintBoard.add(graphpanel, BorderLayout.CENTER);
-
+        paintBoard.add(new GraphPanel(), BorderLayout.CENTER);
         panelC.setLayout(new BorderLayout());
         panelC.add(new toolBoxPanel(),BorderLayout.CENTER);
 
         JFrame frame = new JFrame("GameWindow");
         frame.setJMenuBar(new GameMenu());
-        frame.setSize(700, 500);
+        frame.setSize(800, 800);
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
