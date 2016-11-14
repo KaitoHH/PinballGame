@@ -17,14 +17,17 @@ public class GameWindow {
     private JToolBar menu;
     private JPanel toolMenu;
     private JPanel panelC;
+    private GraphPanel graphPanel;
 
     public static void main(String[] args) {
-        new GameWindow();
+        GameWindow gameWindow = new GameWindow();
+
     }
 
     public GameWindow() {
         paintBoard.setLayout(new BorderLayout());
-        paintBoard.add(new GraphPanel(), BorderLayout.CENTER);
+        graphPanel = new GraphPanel();
+        paintBoard.add(graphPanel, BorderLayout.CENTER);
         panelC.setLayout(new BorderLayout());
         panelC.add(new toolBoxPanel(),BorderLayout.CENTER);
 
@@ -34,5 +37,8 @@ public class GameWindow {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+    }
+    public void draw(){
+        graphPanel.drawTest();
     }
 }
