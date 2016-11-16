@@ -50,7 +50,7 @@ public class GamePanel extends JPanel {
 		boolean doSleep = true;
 		World world = new World(gravity);
 		BodyDef groundBodyDef = new BodyDef();
-		groundBodyDef.type = BodyType.DYNAMIC;
+		groundBodyDef.type = BodyType.STATIC;
 		groundBodyDef.gravityScale = 0;
 		groundBodyDef.position.set(0, -10);
 		Body groundBody = world.createBody(groundBodyDef);
@@ -61,10 +61,10 @@ public class GamePanel extends JPanel {
 		groundFixtureDef.shape = groundBox;
 		groundBody.createFixture(groundFixtureDef);
 
-// Dynamic Body
+		// Dynamic Body
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
-		bodyDef.position.set(0, 60);
+		bodyDef.position.set(10, 60);
 		Body body = world.createBody(bodyDef);
 		PolygonShape dynamicBox = new PolygonShape();
 		dynamicBox.setAsBox(1, 1);
@@ -74,6 +74,20 @@ public class GamePanel extends JPanel {
 		fixtureDef.density = 1;
 		fixtureDef.friction = 0.3f;
 		body.createFixture(fixtureDef);
+
+		// Dynamic Body
+		BodyDef bodyDef2 = new BodyDef();
+		bodyDef2.type = BodyType.DYNAMIC;
+		bodyDef2.position.set(0, 10);
+		bodyDef2.gravityScale = 0;
+		Body body2 = world.createBody(bodyDef2);
+		PolygonShape dynamicBox2 = new PolygonShape();
+		dynamicBox2.set(new Vec2[]{new Vec2(-5, 10), new Vec2(-5, 12), new Vec2(10, 12)}, 3);
+		FixtureDef fixtureDef2 = new FixtureDef();
+		fixtureDef2.shape = dynamicBox2;
+		fixtureDef2.density = 3;
+		fixtureDef2.friction = 0.3f;
+		body2.createFixture(fixtureDef2);
 
 // Setup world
 		debugDraw.setFlags(debugDraw.e_shapeBit);
@@ -138,11 +152,7 @@ public class GamePanel extends JPanel {
 				yInts[i] *= 10;
 			}
 
-			g.setColor(Color.GREEN);
-			/*Graphics2D g2d = (Graphics2D)g;
-			g2d.draw();
-			g2d.drawPolygon();
-			diva.util.java2d.Polygon2D.Double*/
+			g.setColor(Color.getHSBColor(color.x, color.y, color.z));
 			g.fillPolygon(xInts, yInts, vertexCount);
 
 			// outside
