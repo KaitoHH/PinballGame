@@ -17,16 +17,16 @@ public class GameWindow {
     private JToolBar menu;
     private JPanel toolMenu;
     private JPanel panelC;
-    private GraphPanel graphPanel;
+    private GamePanel graphPanel;
 
     public static void main(String[] args) {
         GameWindow gameWindow = new GameWindow();
-
+        gameWindow.draw();
     }
 
     public GameWindow() {
         paintBoard.setLayout(new BorderLayout());
-        graphPanel = new GraphPanel();
+        graphPanel = new GamePanel();
         paintBoard.add(graphPanel, BorderLayout.CENTER);
         panelC.setLayout(new BorderLayout());
         panelC.add(new toolBoxPanel(),BorderLayout.CENTER);
@@ -39,6 +39,6 @@ public class GameWindow {
         frame.setVisible(true);
     }
     public void draw(){
-        graphPanel.drawTest();
+        graphPanel.setUp();
     }
 }

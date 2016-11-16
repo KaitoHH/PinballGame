@@ -1,4 +1,6 @@
 import org.jbox2d.collision.AABB;
+import org.jbox2d.collision.shapes.CircleShape;
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.testbed.framework.*;
 import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
 
@@ -13,11 +15,16 @@ import javax.swing.*;
  */
 public class Test {
 	public static void main(String[] args) {
-		TestbedModel model = new TestbedModel();         // create our model
+		/*TestbedModel model = new TestbedModel();         // create our model
+		TestList.populateModel(model);
 		model.addTest(new MJWTest2());                   // add our test
 		TestbedPanel panel = new TestPanelJ2D(model);    // create our testbed panel
 		JFrame testbed = new MyFrame(model, panel, TestbedController.UpdateBehavior.UPDATE_CALLED); // put both into our testbed frame
 		testbed.setVisible(true);
-		testbed.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		testbed.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);*/
+		CircleShape circleShape = new CircleShape();
+		circleShape.getRadius();
+
+
 	}
 }
