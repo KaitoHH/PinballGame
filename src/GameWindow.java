@@ -9,36 +9,41 @@ import java.awt.*;
  * All rights reserved.
  */
 public class GameWindow {
-    private JPanel panel1;
-    private JButton button1;
-    private JButton button2;
-    private JButton playButton;
-    private JPanel paintBoard;
-    private JToolBar menu;
-    private JPanel toolMenu;
-    private JPanel panelC;
-    private GraphPanel graphPanel;
+	private JPanel panel1;
+	private JButton button1;
+	private JButton button2;
+	private JPanel paintBoard;
+	private JToolBar menu;
+	private JPanel toolMenu;
+	private JPanel panelC;
+	private GraphPanel graphPanel;
+	private toolBoxPanel toolPanel;
 
-    public static void main(String[] args) {
-        GameWindow gameWindow = new GameWindow();
-        //gameWindow.draw();
+	public static void main(String[] args) {
+		GameWindow gameWindow = new GameWindow();
+	}
+
+	public GameWindow() {
+		paintBoard.setLayout(new BorderLayout());
+		graphPanel = new GraphPanel();
+		paintBoard.add(graphPanel, BorderLayout.CENTER);
+
+
+		toolPanel = new toolBoxPanel(graphPanel);
+		panelC.setLayout(new BorderLayout());
+		panelC.add(toolPanel, BorderLayout.CENTER);
+
+		graphPanel.setDataSource(toolPanel);
+
+
+		JFrame frame = new JFrame("GameWindow");
+		frame.setJMenuBar(new GameMenu());
+		frame.setSize(800, 800);
+		frame.setContentPane(panel1);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+	}
+	public void draw(){
+	    graphPanel.build();
     }
-
-    public GameWindow() {
-        paintBoard.setLayout(new BorderLayout());
-        graphPanel = new GraphPanel();
-        paintBoard.add(graphPanel, BorderLayout.CENTER);
-        panelC.setLayout(new BorderLayout());
-        panelC.add(new toolBoxPanel(),BorderLayout.CENTER);
-
-        JFrame frame = new JFrame("GameWindow");
-        frame.setJMenuBar(new GameMenu());
-        frame.setSize(800, 800);
-        frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-    }
-    /*public void draw(){
-        graphPanel.setUp();
-    }*/
 }

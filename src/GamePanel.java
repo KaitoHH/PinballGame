@@ -1,4 +1,5 @@
 import org.jbox2d.callbacks.DebugDraw;
+import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.*;
 import org.jbox2d.dynamics.*;
@@ -8,10 +9,7 @@ import org.jbox2d.pooling.arrays.IntArray;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
@@ -28,43 +26,70 @@ import java.util.Timer;
  * All rights reserved.
  */
 public class GamePanel extends JPanel {
-	private int x;
-	private int y;
-	boolean flag;
-
 	float timeStep = 1.0f / 60.0f;
 	int velocityIterations = 6;
 	int positionIterations = 2;
 
 	Image image;
 
+	World world;
+	int size;
+	GameDraw debugDraw;
+
 	public GamePanel() {
-		//setBackground(Color.PINK);
-		x = y = 0;
-		flag = true;
+		size = 72;
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				addBall(e.getX()/10, e.getY()/10);
+			}
+		});
+	}
+
+	public void setUpBroder() {
+		addSingleBroder(0, 0);
+		addSingleBroder(0, 1);
+		addSingleBroder(1, 0);
+		addSingleBroder(1, 1);
+	}
+
+	private World getWorld() {
+		return world;
+	}
+
+	private void addSingleBroder(int x, int y) {
+		BodyDef def = new BodyDef();
+		def.type = BodyType.STATIC;
+		def.position.set(x * size, x * size);
+		Body body = getWorld().createBody(def);
+		PolygonShape box = new PolygonShape();
+		if (y == 0) {
+			box.setAsBox(size, 0.1f);
+		} else {
+			box.setAsBox(0.1f, size);
+		}
+		body.createFixture(box, 0);
+	}
+
+	public void addBall(int x, int y) {
+		BodyDef bodydef = new BodyDef();
+		bodydef.type = BodyType.DYNAMIC;
+		bodydef.position.set(x, y);
+		Body body = world.createBody(bodydef);
+		CircleShape shape = new CircleShape();
+		shape.setRadius(10);
+		body.createFixture(shape, 1);
 	}
 
 	public void setUp() {
-		Draw debugDraw = new Draw();
+		debugDraw = new GameDraw(size);
 		Vec2 gravity = new Vec2(0, -50);
-		boolean doSleep = true;
-		World world = new World(gravity);
-		BodyDef groundBodyDef = new BodyDef();
-		groundBodyDef.type = BodyType.STATIC;
-		groundBodyDef.gravityScale = 0;
-		groundBodyDef.position.set(0, -10);
-		Body groundBody = world.createBody(groundBodyDef);
-		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(100, 1);
-		FixtureDef groundFixtureDef = new FixtureDef();
-		groundFixtureDef.density = 3;
-		groundFixtureDef.shape = groundBox;
-		groundBody.createFixture(groundFixtureDef);
+		world = new World(gravity);
 
 		// Dynamic Body
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
-		bodyDef.position.set(10, 60);
+		bodyDef.position.set(size / 2, size / 2);
 		Body body = world.createBody(bodyDef);
 		PolygonShape dynamicBox = new PolygonShape();
 		dynamicBox.setAsBox(1, 1);
@@ -89,20 +114,18 @@ public class GamePanel extends JPanel {
 		fixtureDef2.friction = 0.3f;
 		body2.createFixture(fixtureDef2);
 
-// Setup world
+		setUpBroder();
+
 		debugDraw.setFlags(debugDraw.e_shapeBit);
 		world.setDebugDraw(debugDraw);
-
-		for (int i = 0; i < 600; ++i) {
+		while (true) {
 			world.step(timeStep, velocityIterations, positionIterations);
-			Vec2 position = body.getPosition();
-			float angle = body.getAngle();
 			image = createImage(getWidth(), getHeight());
+			debugDraw.setImage(image);
 			world.drawDebugData();
 			repaint();
-			System.out.println(i + ": X: " + position.x + " Y: " + position.y + " ANGLE: " + angle);
 			try {
-				Thread.sleep(1000 / 60);
+				Thread.sleep((long) (timeStep * 1000));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -113,75 +136,7 @@ public class GamePanel extends JPanel {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.clearRect(0, 0, getWidth(), getHeight());
-		g.drawImage(image, 0, 0, null);
+		g.drawImage(image, 0, 0, this);
 	}
 
-
-	public Graphics get_Graphics() {
-		return image.getGraphics();
-	}
-
-	class Draw extends DebugDraw {
-		private final Vec2 temp = new Vec2();
-		private final IntArray xIntsPool = new IntArray();
-		private final IntArray yIntsPool = new IntArray();
-
-		public Draw() {
-			super(new OBBViewportTransform());
-			getViewportTranform().setYFlip(true);
-			getViewportTranform().setCenter(0.0f, 40.0f);
-		}
-
-		@Override
-		public void drawPoint(Vec2 vec2, float v, Color3f color3f) {
-			Graphics g = getGraphics();
-
-		}
-
-		@Override
-		public void drawSolidPolygon(Vec2[] vertices, int vertexCount, Color3f color) {
-			Graphics g = get_Graphics();
-			int[] xInts = xIntsPool.get(vertexCount);
-			int[] yInts = yIntsPool.get(vertexCount);
-
-			for (int i = 0; i < vertexCount; i++) {
-				getWorldToScreenToOut(vertices[i], temp);
-				xInts[i] = (int) Math.round(temp.x / 1) + 10;
-				xInts[i] *= 10;
-				yInts[i] = (int) Math.round(temp.y / 1) + 10;
-				yInts[i] *= 10;
-			}
-
-			g.setColor(Color.getHSBColor(color.x, color.y, color.z));
-			g.fillPolygon(xInts, yInts, vertexCount);
-
-			// outside
-			drawPolygon(vertices, vertexCount, color);
-		}
-
-		@Override
-		public void drawCircle(Vec2 vec2, float v, Color3f color3f) {
-
-		}
-
-		@Override
-		public void drawSolidCircle(Vec2 vec2, float v, Vec2 vec21, Color3f color3f) {
-
-		}
-
-		@Override
-		public void drawSegment(Vec2 vec2, Vec2 vec21, Color3f color3f) {
-
-		}
-
-		@Override
-		public void drawTransform(Transform transform) {
-
-		}
-
-		@Override
-		public void drawString(float v, float v1, String s, Color3f color3f) {
-
-		}
-	}
 }

@@ -12,12 +12,6 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="15efd" class="javax.swing.JButton" binding="playButton" default-binding="true">
-            <constraints border-constraint="North"/>
-            <properties>
-              <text value="Play!"/>
-            </properties>
-          </component>
           <grid id="bacc" binding="panelC" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints border-constraint="Center"/>
             <properties>
