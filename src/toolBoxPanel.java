@@ -1,6 +1,7 @@
 import com.sun.corba.se.impl.orbutil.graph.Graph;
 
 import javax.swing.*;
+import javax.tools.Tool;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,216 +13,232 @@ import java.util.ArrayList;
  * Created by Cach on 2016/11/14.
  */
 public class toolBoxPanel extends JPanel {
-	enum mode {
-		gizmo, rotate, enlarge, shrink
-	}
 
-	private JButton playButton;
-	mode curmode;
+    enum mode {
+        gizmo, rotate, enlarge, shrink
+    }
 
-	private boolean buildMode;
-	GraphPanel.Shape shape;
-	Color gizmoColor;
-	int rotation;
+    public mode getCurmode() {
+        return curmode;
+    }
 
-	public GraphPanel.Shape getShape() {
-		return shape;
-	}
+    public void setCurmode(mode curmode) {
+        this.curmode = curmode;
+    }
 
-	public Color getGizmoColor() {
-		return gizmoColor;
-	}
+    private JButton playButton;
+    mode curmode;
 
-	public int getRotation() {
-		return rotation;
-	}
+    private boolean buildMode;
+    GraphPanel.Shape shape;
+    Color gizmoColor;
+    int rotation;
 
-	java.util.List<ToolBoxButton> compoments;
+    public GraphPanel.Shape getShape() {
+        return shape;
+    }
 
-	public toolBoxPanel(GraphPanel panel) {
-		setLayout(null);
-		//更改游戏模式，开始游戏，暂停游戏切换回Build Model
-		playButton = new JButton("Play!");
-		Font font = new Font("等线light", Font.ITALIC, 12);
-		playButton.setFont(font);
-		playButton.setBounds(0, 200, 70, 30);
-		add(playButton);
-		buildMode = true;
-		//playButton的鼠标事件
-		playButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				buildMode = !buildMode;
-				if (buildMode == false) {
-					playButton.setText("Pause");
-				} else {
-					playButton.setText("Play!");
-				}
-				panel.build();
-			}
-		});
+    public Color getGizmoColor() {
+        return gizmoColor;
+    }
 
-		ToolBoxButton circleButton = new ToolBoxButton(new ImageIcon("PinballRes/Circle_Green.png"));
-		circleButton.setBounds(0, 0, 30, 30);
-		circleButton.setShape(GraphPanel.Shape.Ball);
-		circleButton.setGizmoColor(Color.green);
-		add(circleButton);
+    public int getRotation() {
+        return rotation;
+    }
 
-		ToolBoxButton boxButton = new ToolBoxButton(new ImageIcon("PinballRes/square.png"));
-		boxButton.setBounds(40, 0, 30, 30);
-		add(boxButton);
-		boxButton.setShape(GraphPanel.Shape.Rectangle);
-		boxButton.setGizmoColor(Color.BLUE);
+    java.util.List<ToolBoxButton> compoments;
 
-		ToolBoxButton purpleCircleButton = new ToolBoxButton(new ImageIcon("PinballRes/Purple_Circle.png"));
-		purpleCircleButton.setBounds(0, 40, 30, 30);
-		add(purpleCircleButton);
-		purpleCircleButton.setShape(GraphPanel.Shape.Circle);
-		purpleCircleButton.setGizmoColor(Color.PINK);
+    public toolBoxPanel(GraphPanel panel) {
+        GraphPanel panel1 = panel;
+        setLayout(null);
+        //更改游戏模式，开始游戏，暂停游戏切换回Build Model
+        playButton = new JButton("Play!");
+        Font font = new Font("等线light", Font.ITALIC, 12);
+        playButton.setFont(font);
+        playButton.setBounds(0, 200, 70, 30);
+        add(playButton);
+        buildMode = true;
+        //playButton的鼠标事件
+        playButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                buildMode = !buildMode;
+                if (buildMode == false) {
+                    playButton.setText("Pause");
+                    panel.build();
+                } else {
+                    playButton.setText("Play!");
+                }
+            }
+        });
 
-		ToolBoxButton blankButton = new ToolBoxButton(new ImageIcon("PinballRes/White_Blank.png"));
-		blankButton.setBounds(40, 40, 30, 30);
-		add(blankButton);
-		blankButton.setShape(GraphPanel.Shape.Rectangle);
-		blankButton.setGizmoColor(Color.WHITE);
+        ToolBoxButton circleButton = new ToolBoxButton(new ImageIcon("PinballRes/Circle_Green.png"));
+        circleButton.setBounds(0, 0, 30, 30);
+        circleButton.setShape(GraphPanel.Shape.Circle);
+        circleButton.setGizmoColor(Color.green);
+        add(circleButton);
 
-		ToolBoxButton rctangleButton = new ToolBoxButton(new ImageIcon("PinballRes/Ruler_Triangle.png"));
-		rctangleButton.setBounds(0, 80, 30, 30);
-		add(rctangleButton);
-		rctangleButton.setGizmoColor(Color.BLACK);
-		rctangleButton.setShape(GraphPanel.Shape.Rectangle);
+        ToolBoxButton boxButton = new ToolBoxButton(new ImageIcon("PinballRes/square.png"));
+        boxButton.setBounds(40, 0, 30, 30);
+        add(boxButton);
+        boxButton.setShape(GraphPanel.Shape.Rectangle);
+        boxButton.setGizmoColor(Color.BLUE);
 
-		ToolBoxButton redCircleButton = new ToolBoxButton(new ImageIcon("PinballRes/Red_Circle.png"));
-		redCircleButton.setBounds(40, 80, 30, 30);
-		add(redCircleButton);
-		redCircleButton.setShape(GraphPanel.Shape.Circle);
-		redCircleButton.setGizmoColor(Color.RED);
+        ToolBoxButton purpleCircleButton = new ToolBoxButton(new ImageIcon("PinballRes/Purple_Circle.png"));
+        purpleCircleButton.setBounds(0, 40, 30, 30);
+        add(purpleCircleButton);
+        purpleCircleButton.setShape(GraphPanel.Shape.Circle);
+        purpleCircleButton.setGizmoColor(Color.PINK);
 
-		ToolBoxButton grayButton = new ToolBoxButton(new ImageIcon("PinballRes/Gray_Circle.png"));
-		grayButton.setBounds(0, 120, 30, 30);
-		add(grayButton);
-		grayButton.setGizmoColor(Color.GRAY);
-		grayButton.setShape(GraphPanel.Shape.Circle);
+        ToolBoxButton blankButton = new ToolBoxButton(new ImageIcon("PinballRes/White_Blank.png"));
+        blankButton.setBounds(40, 40, 30, 30);
+        add(blankButton);
+        blankButton.setShape(GraphPanel.Shape.Rectangle);
+        blankButton.setGizmoColor(Color.WHITE);
 
-		ToolBoxButton planePaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/stick.png"));
-		planePaddleButton.setBounds(40, 120, 30, 30);
-		add(planePaddleButton);
-		planePaddleButton.setShape(GraphPanel.Shape.Rectangle);
-		planePaddleButton.setGizmoColor(Color.YELLOW);
-		planePaddleButton.setRotation(0);
+        ToolBoxButton rctangleButton = new ToolBoxButton(new ImageIcon("PinballRes/Ruler_Triangle.png"));
+        rctangleButton.setBounds(0, 80, 30, 30);
+        add(rctangleButton);
+        rctangleButton.setGizmoColor(Color.BLACK);
+        rctangleButton.setShape(GraphPanel.Shape.Rectangle);
 
-		ToolBoxButton upPaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/stick2.png"));
-		upPaddleButton.setBounds(0, 160, 30, 30);
-		add(upPaddleButton);
-		upPaddleButton.setGizmoColor(Color.yellow);
-		upPaddleButton.setShape(GraphPanel.Shape.Paddle);
-		upPaddleButton.setRotation(3);
+        ToolBoxButton redCircleButton = new ToolBoxButton(new ImageIcon("PinballRes/Red_Circle.png"));
+        redCircleButton.setBounds(40, 80, 30, 30);
+        add(redCircleButton);
+        redCircleButton.setShape(GraphPanel.Shape.Circle);
+        redCircleButton.setGizmoColor(Color.RED);
 
-		ToolBoxButton downPaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/stick_1.png"));
-		downPaddleButton.setBounds(40, 160, 30, 30);
-		add(downPaddleButton);
-		downPaddleButton.setGizmoColor(Color.YELLOW);
-		downPaddleButton.setShape(GraphPanel.Shape.Paddle);
-		downPaddleButton.setRotation(1);
+        ToolBoxButton grayButton = new ToolBoxButton(new ImageIcon("PinballRes/Gray_Circle.png"));
+        grayButton.setBounds(0, 120, 30, 30);
+        add(grayButton);
+        grayButton.setGizmoColor(Color.GRAY);
+        grayButton.setShape(GraphPanel.Shape.Circle);
 
-		ToolBoxButton rotateButton = new ToolBoxButton(new ImageIcon("PinballRes/rotateButtonIcon.png"));
-		rotateButton.setBounds(0, 240, 70, 30);
-		add(rotateButton);
+        ToolBoxButton planePaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/stick.png"));
+        planePaddleButton.setBounds(40, 120, 30, 30);
+        add(planePaddleButton);
+        planePaddleButton.setShape(GraphPanel.Shape.Rectangle);
+        planePaddleButton.setGizmoColor(Color.YELLOW);
+        planePaddleButton.setRotation(0);
 
-        ToolBoxButton enlargeButton=new ToolBoxButton("Enlarge");
-        enlargeButton.setBounds(0,300,70,30);
+        ToolBoxButton upPaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/stick2.png"));
+        upPaddleButton.setBounds(0, 160, 30, 30);
+        add(upPaddleButton);
+        upPaddleButton.setGizmoColor(Color.yellow);
+        upPaddleButton.setShape(GraphPanel.Shape.Paddle);
+        upPaddleButton.setRotation(3);
+
+        ToolBoxButton downPaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/stick_1.png"));
+        downPaddleButton.setBounds(40, 160, 30, 30);
+        add(downPaddleButton);
+        downPaddleButton.setGizmoColor(Color.YELLOW);
+        downPaddleButton.setShape(GraphPanel.Shape.Paddle);
+        downPaddleButton.setRotation(1);
+
+        ToolBoxButton rotateButton = new ToolBoxButton(new ImageIcon("PinballRes/rotateButtonIcon.png"));
+        rotateButton.setBounds(0, 240, 70, 30);
+        add(rotateButton);
+
+        ToolBoxButton enlargeButton = new ToolBoxButton("+");
+        enlargeButton.setBounds(0, 300, 70, 30);
         add(enlargeButton);
-        enlargeButton.setCurMode(ToolBoxButton.mode.enlarge);
+        enlargeButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                setCurmode(mode.enlarge);
+            }
+        });
 
-        ToolBoxButton shrinkButton=new ToolBoxButton("Shrink");
-        shrinkButton.setBounds(0,340,70,30);
+        ToolBoxButton shrinkButton = new ToolBoxButton("-");
+        shrinkButton.setBounds(0, 340, 70, 30);
         add(shrinkButton);
-        shrinkButton.setCurMode(ToolBoxButton.mode.shrink);
+        shrinkButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                setCurmode(mode.shrink);
+            }
+        });
+
+        ToolBoxButton ballButton = new ToolBoxButton(new ImageIcon("PinballRes/Ball_Icon.png"));
+        ballButton.setBounds(0, 380, 70, 30);
+        add(ballButton);
 
 //将button组成一个队列，方便重载button类的属性
-		compoments = new ArrayList();
-		compoments.add(circleButton);
-		compoments.add(redCircleButton);
-		compoments.add(boxButton);
-		compoments.add(purpleCircleButton);
-		compoments.add(blankButton);
-		compoments.add(rctangleButton);
-		compoments.add(grayButton);
-		compoments.add(planePaddleButton);
-		compoments.add(upPaddleButton);
-		compoments.add(downPaddleButton);
-		compoments.add(rotateButton);
+        compoments = new ArrayList();
+        compoments.add(circleButton);
+        compoments.add(redCircleButton);
+        compoments.add(boxButton);
+        compoments.add(purpleCircleButton);
+        compoments.add(blankButton);
+        compoments.add(rctangleButton);
+        compoments.add(grayButton);
+        compoments.add(planePaddleButton);
+        compoments.add(upPaddleButton);
+        compoments.add(downPaddleButton);
+        compoments.add(rotateButton);
         compoments.add(enlargeButton);
         compoments.add(shrinkButton);
+        compoments.add(ballButton);
 
-		addButtonActionListener();
+        addButtonActionListener();
 
-		this.setPreferredSize(new Dimension(100, 100));
-	}
+        this.setPreferredSize(new Dimension(100, 100));
+    }
 
-	public boolean isBuildMode() {
-		return buildMode;
-	}
+    public boolean isBuildMode() {
+        return buildMode;
+    }
 
-	private void addButtonActionListener() {
-		for (ToolBoxButton button : compoments) {
-			button.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					curmode = mode.gizmo;
-					shape = button.getShape();
-					gizmoColor = button.getGizmoColor();
-					rotation = button.getRotation();
-				}
-			});
-		}
-	}
+    private void addButtonActionListener() {
+        for (ToolBoxButton button : compoments) {
+            button.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    curmode = mode.gizmo;
+                    shape = button.getShape();
+                    gizmoColor = button.getGizmoColor();
+                    rotation = button.getRotation();
+                }
+            });
+        }
+    }
 }
 
 class ToolBoxButton extends JButton {
-	private Color gizmoColor;
-	private GraphPanel.Shape shape;
-	private int rotation;
-    enum mode{gizmo,rotate,enlarge,shrink};
-    private mode curMode;
+    private Color gizmoColor;
+    private GraphPanel.Shape shape;
+    private int rotation;
 
-	public ToolBoxButton(Icon icon) {
-		super(icon);
-	}
+    public ToolBoxButton(Icon icon) {
+        super(icon);
+    }
 
     public ToolBoxButton(String text) {
         super(text);
     }
 
     public Color getGizmoColor() {
-		return gizmoColor;
-	}
-
-	public void setGizmoColor(Color gizmoColor) {
-		this.gizmoColor = gizmoColor;
-	}
-
-	public GraphPanel.Shape getShape() {
-		return shape;
-	}
-
-	public void setShape(GraphPanel.Shape shape) {
-		this.shape = shape;
-	}
-
-	public int getRotation() {
-		return rotation;
-	}
-
-	public void setRotation(int rotation) {
-		this.rotation = rotation;
-	}
-
-    public mode getCurMode() {
-        return curMode;
+        return gizmoColor;
     }
 
-    public void setCurMode(mode curMode) {
-        this.curMode = curMode;
+    public void setGizmoColor(Color gizmoColor) {
+        this.gizmoColor = gizmoColor;
     }
+
+    public GraphPanel.Shape getShape() {
+        return shape;
+    }
+
+    public void setShape(GraphPanel.Shape shape) {
+        this.shape = shape;
+    }
+
+    public int getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(int rotation) {
+        this.rotation = rotation;
+    }
+
 }
