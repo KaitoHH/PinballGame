@@ -34,12 +34,28 @@ public class GraphPanel extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		length = getMinLength();
-		rowHeight = 1.0 * length / rowNum;
-		int x = (int) (1.0 * e.getX() / rowHeight);
-		int y = (int) (1.0 * e.getY() / rowHeight);
-		Gizmo temp = new Gizmo(x, y, 2, dataSource.getShape(), dataSource.getGizmoColor());
-		components.add(temp);
+        length = getMinLength();
+        rowHeight = 1.0 * length / rowNum;
+        int x = (int) (1.0 * e.getX() / rowHeight);
+        int y = (int) (1.0 * e.getY() / rowHeight);
+        if(dataSource.curmode== toolBoxPanel.mode.gizmo) {
+            Gizmo temp = new Gizmo(x, y, 2, dataSource.getShape(), dataSource.getGizmoColor());
+            components.add(temp);
+        }else if(dataSource.curmode== toolBoxPanel.mode.rotate){
+            for(int i=0;i<components.size();i++)
+            {
+                Gizmo temp=components.get(i);
+                int tempX=temp.getX();
+                int tempY=temp.getY();
+                int sizeRate=temp.getSizeRate();
+                if(x>=tempX&&x<tempX+sizeRate&&y>=tempY&&y<tempY+sizeRate)
+                {
+                    //world.destroyBody(components.get(i).getBody());
+                    temp.setAngle(temp.getAngle()+90);
+                    //TODO
+                }
+            }
+        }
 
 		getGraphics().clearRect(0, 0, getWidth(), getHeight());
 		//repaint(0,0,getWidth(),getHeight());
@@ -112,10 +128,14 @@ public class GraphPanel extends JPanel implements MouseListener {
 			g2D.setColor(gizmo.getColor());
 			x = gizmo.getX();
 			y = gizmo.getY();
+            sizeRate=gizmo.getSizeRate();
 			g2D.setTransform(getTransform(0, 0, 0));
 			if (dataSource.isBuildMode()) {
 				px = Coordinate(x);
 				py = Coordinate(y);
+                if(gizmo.getShape()==Shape.Triangle){
+                   g2D.setTransform(getTransform(px+0.5*sizeRate*rowHeight,py+0.5*sizeRate*rowHeight,gizmo.getAngle()));
+                }
 			} else {
 				Vec2 position = gizmo.getBody().getPosition();
 				if (gizmo.getShape() != Shape.Ball) {
@@ -208,7 +228,8 @@ public class GraphPanel extends JPanel implements MouseListener {
 		public void run() {
 			while (!dataSource.isBuildMode()) {
 				world.step(timeStep, velocityIterations, positionIterations);
-				repaint();
+                getGraphics().clearRect(0, 0, getWidth(), getHeight());
+                paintComponent(getGraphics());
 				try {
 					Thread.sleep((long) (timeStep * 1000));
 				} catch (InterruptedException e) {

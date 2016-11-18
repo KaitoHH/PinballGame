@@ -89,7 +89,7 @@ public class toolBoxPanel extends JPanel {
 		rctangleButton.setBounds(0, 80, 30, 30);
 		add(rctangleButton);
 		rctangleButton.setGizmoColor(Color.BLACK);
-		rctangleButton.setShape(GraphPanel.Shape.Rectangle);
+		rctangleButton.setShape(GraphPanel.Shape.Triangle);
 
 		ToolBoxButton redCircleButton = new ToolBoxButton(new ImageIcon("PinballRes/Red_Circle.png"));
 		redCircleButton.setBounds(40, 80, 30, 30);
@@ -127,6 +127,9 @@ public class toolBoxPanel extends JPanel {
 		ToolBoxButton rotateButton = new ToolBoxButton(new ImageIcon("PinballRes/rotateButtonIcon.png"));
 		rotateButton.setBounds(0, 240, 70, 30);
 		add(rotateButton);
+		rotateButton.addActionListener(e->{
+			curmode=mode.rotate;
+		});
 
         ToolBoxButton enlargeButton=new ToolBoxButton("Enlarge");
         enlargeButton.setBounds(0,300,70,30);
@@ -150,9 +153,6 @@ public class toolBoxPanel extends JPanel {
 		compoments.add(planePaddleButton);
 		compoments.add(upPaddleButton);
 		compoments.add(downPaddleButton);
-		compoments.add(rotateButton);
-        compoments.add(enlargeButton);
-        compoments.add(shrinkButton);
 
 		addButtonActionListener();
 
