@@ -129,6 +129,15 @@ public class toolBoxPanel extends JPanel {
 		rotateButton.setBounds(0, 240, 70, 30);
 		add(rotateButton);
 
+        ToolBoxButton enlargeButton=new ToolBoxButton("Enlarge");
+        enlargeButton.setBounds(0,300,70,30);
+        add(enlargeButton);
+        enlargeButton.setCurMode(ToolBoxButton.mode.enlarge);
+
+        ToolBoxButton shrinkButton=new ToolBoxButton("Shrink");
+        shrinkButton.setBounds(0,340,70,30);
+        add(shrinkButton);
+        shrinkButton.setCurMode(ToolBoxButton.mode.shrink);
 
 //将button组成一个队列，方便重载button类的属性
 		compoments = new ArrayList();
@@ -143,6 +152,8 @@ public class toolBoxPanel extends JPanel {
 		compoments.add(upPaddleButton);
 		compoments.add(downPaddleButton);
 		compoments.add(rotateButton);
+        compoments.add(enlargeButton);
+        compoments.add(shrinkButton);
 
 		addButtonActionListener();
 
@@ -172,12 +183,18 @@ class ToolBoxButton extends JButton {
 	private Color gizmoColor;
 	private GraphPanel.Shape shape;
 	private int rotation;
+    enum mode{gizmo,rotate,enlarge,shrink};
+    private mode curMode;
 
 	public ToolBoxButton(Icon icon) {
 		super(icon);
 	}
 
-	public Color getGizmoColor() {
+    public ToolBoxButton(String text) {
+        super(text);
+    }
+
+    public Color getGizmoColor() {
 		return gizmoColor;
 	}
 
@@ -200,4 +217,12 @@ class ToolBoxButton extends JButton {
 	public void setRotation(int rotation) {
 		this.rotation = rotation;
 	}
+
+    public mode getCurMode() {
+        return curMode;
+    }
+
+    public void setCurMode(mode curMode) {
+        this.curMode = curMode;
+    }
 }
