@@ -1,5 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.*;
 import java.io.Serializable;
@@ -8,14 +11,33 @@ import java.util.ArrayList;
 /**
  * Created by Hehongliang on 2016/11/13.
  */
-public class GraphPanel extends JPanel {
+public class GraphPanel extends JPanel{
+
 	enum Shape {
 		Triangle, Rectangle, Circle
 	}
-
 	private final static int rowNum = 20;
 	private java.util.List<Item> components = new ArrayList();
-
+	private int length=200;
+	private double rowHeight=10.0;
+	public GraphPanel(){
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				length = getMinLength();
+				rowHeight = 1.0 * length / rowNum;
+				int x=(int) (1.0*e.getX()/rowHeight);
+				int y=(int) (1.0*e.getY()/rowHeight);
+				System.out.println(e.getX());
+				System.out.println(rowHeight);
+				System.out.println(x);
+				Item circle=new Item(x,y,1,Shape.Circle,Color.BLUE);
+				components.add(circle);
+				getGraphics().clearRect(0,0,getWidth(),getHeight());
+				paintComponent(getGraphics());
+			}
+		});
+	}
 	public int getMinLength() {
 		return Math.min(getHeight(), getWidth()) - 15;
 	}
@@ -23,9 +45,9 @@ public class GraphPanel extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		//setBackground(Color.PINK);
-		int length = getMinLength();
+		length = getMinLength();
 		Graphics2D g2D = (Graphics2D) g;
-		double rowHeight = 1.0 * length / rowNum;
+		rowHeight = 1.0 * length / rowNum;
 		for (int i = 0; i <= rowNum; i++) {
 			Line2D row = new Line2D.Double(0, rowHeight * i, length, rowHeight * i);
 			Line2D col = new Line2D.Double(rowHeight * i, 0, rowHeight * i, length);
@@ -33,7 +55,7 @@ public class GraphPanel extends JPanel {
 			g2D.draw(col);     //绘画纵线
 		}
 
-		int x, y, sizeRate;
+		int x, y;int sizeRate;
 		for (int i = 0; i < components.size(); i++) {
 			g2D.setColor(components.get(i).getColor());
 			x = components.get(i).getX();
@@ -53,23 +75,34 @@ public class GraphPanel extends JPanel {
 		}
 	}
 
-	private Ellipse2D paintCircle(double x, double y, double diameter)   //(x,y)是圆形左上角的坐标，diameter是直径
+	private double Coordinate(int i)//获取真实坐标
 	{
-		Ellipse2D circle = new Ellipse2D.Double(x, y, diameter, diameter);
+		return i*rowHeight;
+	}
+
+
+	private Ellipse2D paintCircle(int x, int y, double diameter)
+	//(x,y)是圆形左上角的坐标，diameter是直径
+	{
+		Ellipse2D circle = new Ellipse2D.Double(Coordinate(x), Coordinate(y), diameter, diameter);
 		return circle;
 	}
 
-	private Rectangle2D paintSquare(double x, double y, double height) {  //(x,y)是正方形左上角的坐标，height是边长
-		Rectangle2D square = new Rectangle2D.Double(x, y, height, height);
+	private Rectangle2D paintSquare(int x, int y, double height)
+	//(x,y)是正方形左上角的坐标，height是边长
+	{
+		Rectangle2D square = new Rectangle2D.Double(Coordinate(x), Coordinate(y), height, height);
 		return square;
 	}
 
-	private GeneralPath paintTriangle(double x, double y, double length) {
+	private GeneralPath paintTriangle(int x, int y, double length)
+	//(x,y)是直角三角形左上角的坐标，length是直角边长默认直角在左下角
+	{
 		GeneralPath triangle = new GeneralPath();
-		triangle.moveTo(0, 0);
-		triangle.lineTo(0, length);
+		triangle.moveTo(Coordinate(x), Coordinate(y));
+		triangle.lineTo(Coordinate(x), length);
 		triangle.lineTo(length, length);
-		triangle.lineTo(0, 0);
+		triangle.lineTo(Coordinate(x), Coordinate(y));
 		return triangle;
 	}
 
@@ -81,6 +114,8 @@ public class GraphPanel extends JPanel {
 		repaint();
 		Item item = new Item(3, 5, 1, Shape.Circle, Color.black);
 	}
+
+
 
 	class Item implements Serializable {
 		private int x;
