@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.*;
 import java.io.Serializable;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 /**
  * Created by Hehongliang on 2016/11/13.
  */
-public class GraphPanel extends JPanel {
+public class GraphPanel extends JPanel implements MouseListener {
 	private static final Vec2 graivty = new Vec2(0, -10);
 	private RunThread thread;
 	float timeStep = 1.0f / 60.0f;
@@ -23,8 +24,39 @@ public class GraphPanel extends JPanel {
 
 	private World world;
 
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		length = getMinLength();
+		rowHeight = 1.0 * length / rowNum;
+		int x = (int) (1.0 * e.getX() / rowHeight);
+		int y = (int) (1.0 * e.getY() / rowHeight);
+		Gizmo temp = new Gizmo(x, y, 2, dataSource.getShape(), dataSource.getGizmoColor());
+		components.add(temp);
+
+		getGraphics().clearRect(0, 0, getWidth(), getHeight());
+		//repaint(0,0,getWidth(),getHeight());
+		paintComponent(getGraphics());
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+
+	}
+
 	enum Shape {
-		Triangle, Rectangle, Circle, Paddle
+		Triangle, Rectangle, Circle, Paddle, Ball
 	}
 
 	private final static int rowNum = 20;
@@ -40,22 +72,7 @@ public class GraphPanel extends JPanel {
 		for (int i = 0; i <= 1; i++)
 			for (int j = 0; j <= 1; j++)
 				Gizmo.addSingleBoarder(i, j);
-
-		addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				length = getMinLength();
-				rowHeight = 1.0 * length / rowNum;
-				int x = (int) (1.0 * e.getX() / rowHeight);
-				int y = (int) (1.0 * e.getY() / rowHeight);
-				Gizmo temp = new Gizmo(x, y, 2, dataSource.getShape(), dataSource.getGizmoColor());
-				components.add(temp);
-
-				getGraphics().clearRect(0, 0, getWidth(), getHeight());
-				//repaint(0,0,getWidth(),getHeight());
-				paintComponent(getGraphics());
-			}
-		});
+		addMouseListener(this);
 	}
 
 	public void setDataSource(toolBoxPanel panel) {
@@ -101,8 +118,13 @@ public class GraphPanel extends JPanel {
 				py = Coordinate(y);
 			} else {
 				Vec2 position = gizmo.getBody().getPosition();
-				px = position.x / Gizmo.getLength() * length - gizmo.getSizeRate() * rowHeight / 2.0f;
-				py = position.y / Gizmo.getLength() * length + gizmo.getSizeRate() * rowHeight / 2.0f;
+				if (gizmo.getShape() != Shape.Ball) {
+					px = position.x / Gizmo.getLength() * length - gizmo.getSizeRate() * rowHeight / 2.0f;
+					py = position.y / Gizmo.getLength() * length + gizmo.getSizeRate() * rowHeight / 2.0f;
+				} else {
+					px = position.x / Gizmo.getLength() * length - rowHeight / 4.0f;
+					py = position.y / Gizmo.getLength() * length + rowHeight / 4.0f;
+				}
 				py = length - py;
 				g2D.setTransform(getTransform(px, py, gizmo.getBody().getAngle()));
 			}
@@ -120,7 +142,9 @@ public class GraphPanel extends JPanel {
 				case Paddle:
 					g2D.fill(paintPaddle(px, py));
 					break;
-
+				case Ball:
+					g2D.fill(paintBall(px, py));
+					break;
 			}
 		}
 	}
@@ -174,6 +198,11 @@ public class GraphPanel extends JPanel {
 		return d;
 	}
 
+	private Ellipse2D paintBall(double x, double y) {
+		Ellipse2D circle = new Ellipse2D.Double(x, y, rowHeight / 2, rowHeight / 2);
+		return circle;
+	}
+
 	class RunThread extends Thread {
 		@Override
 		public void run() {
@@ -183,7 +212,6 @@ public class GraphPanel extends JPanel {
 				try {
 					Thread.sleep((long) (timeStep * 1000));
 				} catch (InterruptedException e) {
-					e.printStackTrace();
 					break;
 				}
 			}

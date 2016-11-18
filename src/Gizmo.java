@@ -2,10 +2,7 @@ import javafx.scene.shape.Circle;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.*;
 
 import java.awt.*;
 
@@ -69,6 +66,9 @@ public class Gizmo {
 				break;
 			case Circle:
 				addCircle(x, y, sizeRate);
+				break;
+			case Ball:
+				addBall(x, y);
 				break;
 		}
 	}
@@ -141,12 +141,13 @@ public class Gizmo {
 		y = 20 - y;
 		BodyDef def = new BodyDef();
 		def.type = BodyType.DYNAMIC;
+		def.gravityScale = 0;
 		int a = sizeRate * size;
 		def.position.set(x * size + a / 2.0f, y * size - a / 2.0f);
 		body = world.createBody(def);
 		PolygonShape box = new PolygonShape();
 		box.setAsBox(a / 2.0f, a / 2.0f);
-		body.createFixture(box, 1);
+		body.createFixture(box, 2);
 	}
 
 
@@ -154,11 +155,27 @@ public class Gizmo {
 		y = 20 - y;
 		BodyDef def = new BodyDef();
 		def.type = BodyType.DYNAMIC;
+		def.gravityScale = 0;
 		int r = sizeRate * size;
 		def.position.set(x * size + r / 2.0f, y * size - r / 2.0f);
 		body = world.createBody(def);
 		CircleShape circle = new CircleShape();
 		circle.setRadius(r / 2.0f);
-		body.createFixture(circle, 1);
+		body.createFixture(circle, 2);
+	}
+
+	private void addBall(int x, int y) {
+		y = 20 - y;
+		BodyDef def = new BodyDef();
+		def.type = BodyType.DYNAMIC;
+		float r = size / 2.0f;
+		def.position.set(x * size + r / 2.0f, y * size - r / 2.0f);
+		body = world.createBody(def);
+		CircleShape circle = new CircleShape();
+		circle.setRadius(r / 2.0f);
+		FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = circle;
+		fixtureDef.restitution = 0.8f;
+		body.createFixture(fixtureDef);
 	}
 }

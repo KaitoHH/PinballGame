@@ -39,7 +39,6 @@ public class toolBoxPanel extends JPanel {
 	java.util.List<ToolBoxButton> compoments;
 
 	public toolBoxPanel(GraphPanel panel) {
-		GraphPanel panel1 = panel;
 		setLayout(null);
 		//更改游戏模式，开始游戏，暂停游戏切换回Build Model
 		playButton = new JButton("Play!");
@@ -55,16 +54,16 @@ public class toolBoxPanel extends JPanel {
 				buildMode = !buildMode;
 				if (buildMode == false) {
 					playButton.setText("Pause");
-					panel.build();
 				} else {
 					playButton.setText("Play!");
 				}
+				panel.build();
 			}
 		});
 
 		ToolBoxButton circleButton = new ToolBoxButton(new ImageIcon("PinballRes/Circle_Green.png"));
 		circleButton.setBounds(0, 0, 30, 30);
-		circleButton.setShape(GraphPanel.Shape.Circle);
+		circleButton.setShape(GraphPanel.Shape.Ball);
 		circleButton.setGizmoColor(Color.green);
 		add(circleButton);
 
