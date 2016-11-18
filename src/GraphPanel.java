@@ -64,7 +64,7 @@ public class GraphPanel extends JPanel {
             x = components.get(i).getX();
             y = components.get(i).getY();
             sizeRate = components.get(i).getSizeRate();
-            g2D.setTransform(getTransform(Coordinate(x+1), Coordinate(y), 90));
+            //g2D.setTransform(getTransform(Coordinate(x+1), Coordinate(y), 90));
             switch (components.get(i).getShape()) {
                 case Triangle:
                     g2D.fill(paintTriangle(x, y, sizeRate));
@@ -78,6 +78,7 @@ public class GraphPanel extends JPanel {
                 case Paddle:
                     g2D.fill(paintPaddle(x,y));
                     break;
+
             }
         }
     }
@@ -120,15 +121,15 @@ public class GraphPanel extends JPanel {
         return triangle;
     }
 
-    private GeneralPath paintPaddle(int x,int y)
+
+    private RoundRectangle2D paintPaddle(int x,int y)
     {
-        GeneralPath paddle=new GeneralPath();
-        paddle.moveTo(Coordinate(x+1),Coordinate(y));
-        paddle.lineTo(Coordinate(x+1),Coordinate(y+2));
-        paddle.lineTo(Coordinate(x+1)-0.25*rowHeight,Coordinate(y+2));
-        paddle.lineTo(Coordinate(x+1)-0.25*rowHeight,Coordinate(y));
-        paddle.lineTo(Coordinate(x+1),Coordinate(y));
-        return paddle;
+        double X=Coordinate(x)+0.75*rowHeight;
+        double Y=Coordinate(y);
+        double length=0.25*rowHeight;
+        double weight=Coordinate(2);
+        RoundRectangle2D d = new RoundRectangle2D.Double(X,Y,length,weight,0.5*length,0.5*length);
+        return d;
     }
 
     public void drawTest() {
