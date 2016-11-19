@@ -5,6 +5,7 @@ import org.jbox2d.testbed.framework.*;
 import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Project: PinballGame
@@ -18,7 +19,7 @@ public class Test {
 		TestbedModel model = new TestbedModel();         // create our model
 		model.addTest(new MJWTest2());                   // add our test
 		TestbedPanel panel = new TestPanelJ2D(model);    // create our testbed panel
-		JFrame testbed = new MyFrame(model, panel, TestbedController.UpdateBehavior.UPDATE_CALLED); // put both into our testbed frame
+		JFrame testbed = new TestbedFrame(model, panel, TestbedController.UpdateBehavior.UPDATE_CALLED); // put both into our testbed frame
 		testbed.setVisible(true);
 		testbed.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
