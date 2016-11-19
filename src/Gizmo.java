@@ -217,7 +217,7 @@ public class Gizmo {
 		def.gravityScale = 0;
 		int a = sizeRate * size;
 		def.position.set(x * size + a / 2.0f, y * size - a / 2.0f);
-		def.angle = (float) (-(float) angle / 180 * Math.PI);
+		def.angle = (float) -angle;
 		body = world.createBody(def);
 		PolygonShape shape = new PolygonShape();
 		float r = a / 2.0f;

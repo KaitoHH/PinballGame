@@ -18,11 +18,11 @@ public class toolBoxPanel extends JPanel {
 
 	private JButton playButton;
 	mode curmode;
+	private int sizeRate = 1;
 
 	private boolean buildMode;
 	GraphPanel.Shape shape;
 	Color gizmoColor;
-	int rotation;
 
 	public GraphPanel.Shape getShape() {
 		return shape;
@@ -32,8 +32,8 @@ public class toolBoxPanel extends JPanel {
 		return gizmoColor;
 	}
 
-	public int getRotation() {
-		return rotation;
+	public int getSizeRate() {
+		return sizeRate;
 	}
 
 	java.util.List<ToolBoxButton> compoments;
@@ -50,7 +50,7 @@ public class toolBoxPanel extends JPanel {
 		//playButton的鼠标事件
 		playButton.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mouseReleased(MouseEvent e) {
 				buildMode = !buildMode;
 				if (buildMode == false) {
 					playButton.setText("Pause");
@@ -127,19 +127,33 @@ public class toolBoxPanel extends JPanel {
 		ToolBoxButton rotateButton = new ToolBoxButton(new ImageIcon("PinballRes/rotateButtonIcon.png"));
 		rotateButton.setBounds(0, 240, 70, 30);
 		add(rotateButton);
-		rotateButton.addActionListener(e->{
-			curmode=mode.rotate;
+		rotateButton.addActionListener(e -> {
+			curmode = mode.rotate;
 		});
 
-        ToolBoxButton enlargeButton=new ToolBoxButton("Enlarge");
-        enlargeButton.setBounds(0,300,70,30);
-        add(enlargeButton);
-        enlargeButton.setCurMode(ToolBoxButton.mode.enlarge);
+		SpinnerModel model = new SpinnerNumberModel(1, 1, 5, 1);
+		JSpinner spinner = new JSpinner(model);
+		JTextField textField = new JTextField(2);
+		textField.setEditable(false);
+		textField.setText("1");
+		spinner.setEditor(textField);
+		spinner.addChangeListener(e -> {
+			sizeRate = (int) spinner.getValue();
+			textField.setText(spinner.getValue().toString());
+		});
+		spinner.setBounds(0, 300, 70, 30);
+		add(spinner);
 
-        ToolBoxButton shrinkButton=new ToolBoxButton("Shrink");
-        shrinkButton.setBounds(0,340,70,30);
-        add(shrinkButton);
-        shrinkButton.setCurMode(ToolBoxButton.mode.shrink);
+
+		/*ToolBoxButton enlargeButton = new ToolBoxButton("Enlarge");
+		enlargeButton.setBounds(0, 300, 70, 30);
+		add(enlargeButton);
+		enlargeButton.setCurMode(ToolBoxButton.mode.enlarge);
+
+		ToolBoxButton shrinkButton = new ToolBoxButton("Shrink");
+		shrinkButton.setBounds(0, 340, 70, 30);
+		add(shrinkButton);
+		shrinkButton.setCurMode(ToolBoxButton.mode.shrink);*/
 
 //将button组成一个队列，方便重载button类的属性
 		compoments = new ArrayList();
@@ -167,11 +181,10 @@ public class toolBoxPanel extends JPanel {
 		for (ToolBoxButton button : compoments) {
 			button.addMouseListener(new MouseAdapter() {
 				@Override
-				public void mouseClicked(MouseEvent e) {
+				public void mouseReleased(MouseEvent e) {
 					curmode = mode.gizmo;
 					shape = button.getShape();
 					gizmoColor = button.getGizmoColor();
-					rotation = button.getRotation();
 				}
 			});
 		}
@@ -182,18 +195,20 @@ class ToolBoxButton extends JButton {
 	private Color gizmoColor;
 	private GraphPanel.Shape shape;
 	private int rotation;
-    enum mode{gizmo,rotate,enlarge,shrink};
-    private mode curMode;
+
+	enum mode {gizmo, rotate, enlarge, shrink}
+
+	private mode curMode;
 
 	public ToolBoxButton(Icon icon) {
 		super(icon);
 	}
 
-    public ToolBoxButton(String text) {
-        super(text);
-    }
+	public ToolBoxButton(String text) {
+		super(text);
+	}
 
-    public Color getGizmoColor() {
+	public Color getGizmoColor() {
 		return gizmoColor;
 	}
 
@@ -217,11 +232,11 @@ class ToolBoxButton extends JButton {
 		this.rotation = rotation;
 	}
 
-    public mode getCurMode() {
-        return curMode;
-    }
+	public mode getCurMode() {
+		return curMode;
+	}
 
-    public void setCurMode(mode curMode) {
-        this.curMode = curMode;
-    }
+	public void setCurMode(mode curMode) {
+		this.curMode = curMode;
+	}
 }
