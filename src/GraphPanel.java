@@ -29,7 +29,6 @@ public class GraphPanel extends JPanel {
 	private int length = 200;
 	private double rowHeight = 10.0;
 	private toolBoxPanel dataSource;
-	private Gizmo gizmo;
 
 	public GraphPanel() {
 		world = new World(gravity);
@@ -54,9 +53,6 @@ public class GraphPanel extends JPanel {
 					if (canAdd(x, y, sizeRate)) {
 						Gizmo temp = new Gizmo(x, y, sizeRate, dataSource.getShape(), dataSource.getGizmoColor(), dataSource.getRotate());
 						components.add(temp);
-						if (temp.getShape() == Shape.Paddle) {
-							gizmo = temp;
-						}
 					}
 				} else if (dataSource.curmode == toolBoxPanel.mode.rotate) {
 					Gizmo gizmo = getGizmo(x, y);
@@ -76,8 +72,10 @@ public class GraphPanel extends JPanel {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyChar() == ' ') {
-					if (gizmo != null) {
-						gizmo.applyForce();
+					for (Gizmo gizmo : components) {
+						if (gizmo.getShape() == Shape.Paddle) {
+							gizmo.applyForce();
+						}
 					}
 				}
 			}
