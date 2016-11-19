@@ -26,6 +26,7 @@ public class Gizmo {
 	private int x;
 	private int y;
 	private int sizeRate = 1;
+	private toolBoxPanel.rotation rotate;
 	private GraphPanel.Shape shape;
 	private Color color;
 	private double angle = 0 * Math.PI / 180;
@@ -42,12 +43,13 @@ public class Gizmo {
 		Gizmo.rowNum = rowNum;
 	}
 
-	public Gizmo(int x, int y, int sizeRate, GraphPanel.Shape shape, Color color) {
+	public Gizmo(int x, int y, int sizeRate, GraphPanel.Shape shape, Color color, toolBoxPanel.rotation rotate) {
 		this.x = x;
 		this.y = y;
 		this.sizeRate = sizeRate;
 		this.shape = shape;
 		this.color = color;
+		this.rotate = rotate;
 		createBody();
 	}
 
@@ -127,6 +129,10 @@ public class Gizmo {
 
 	public void setAngle(double angle) {
 		this.angle = angle;
+	}
+
+	public toolBoxPanel.rotation getRotate() {
+		return rotate;
 	}
 
 	public static void addSingleBoarder(int x, int y) {

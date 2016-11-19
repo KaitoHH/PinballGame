@@ -52,7 +52,7 @@ public class GraphPanel extends JPanel {
 					else if (dataSource.getShape() == Shape.Paddle)
 						sizeRate = 2;
 					if (canAdd(x, y, sizeRate)) {
-						Gizmo temp = new Gizmo(x, y, sizeRate, dataSource.getShape(), dataSource.getGizmoColor());
+						Gizmo temp = new Gizmo(x, y, sizeRate, dataSource.getShape(), dataSource.getGizmoColor(), dataSource.getRotate());
 						components.add(temp);
 						if (temp.getShape() == Shape.Paddle) {
 							gizmo = temp;
@@ -188,7 +188,7 @@ public class GraphPanel extends JPanel {
 					g2D.fill(paintCircle(px, py, sizeRate));
 					break;
 				case Paddle:
-					g2D.fill(paintPaddle(px, py));
+					g2D.fill(paintPaddle(px, py, gizmo.getRotate()));
 					break;
 				case Ball:
 					g2D.fill(paintBall(px, py));
@@ -237,13 +237,18 @@ public class GraphPanel extends JPanel {
 	}
 
 
-	private RoundRectangle2D paintPaddle(double x, double y) {
-		double X = x + 0.75 * rowHeight;
-		double Y = y;
-		double length = 0.25 * rowHeight;
-		double weight = Coordinate(2);
-		RoundRectangle2D d = new RoundRectangle2D.Double(X, Y, length, weight, 0.5 * length, 0.5 * length);
-		return d;
+	private RoundRectangle2D paintPaddle(double x, double y, toolBoxPanel.rotation rotate) {
+		if (rotate == toolBoxPanel.rotation.left) {
+			double X = x + 0.75 * rowHeight;
+			double Y = y;
+			double length = 0.25 * rowHeight;
+			double weight = Coordinate(2);
+			RoundRectangle2D d = new RoundRectangle2D.Double(X, Y, length, weight, 0.5 * length, 0.5 * length);
+			return d;
+		} else {
+			// TODO: 2016/11/19
+			return null;
+		}
 	}
 
 	private Ellipse2D paintBall(double x, double y) {
