@@ -115,6 +115,17 @@ public class MJWTest2 extends TestbedTest {
 			ground.createFixture(shape, 0.0f);
 		}
 
+		BodyDef def = new BodyDef();
+		def.type = BodyType.DYNAMIC;
+		def.gravityScale = 0;
+		int a = 5;
+		def.position.set(-10, 10);
+		//def.angle = (float) (Math.PI / 2);
+		Body body = getWorld().createBody(def);
+		PolygonShape shape = new PolygonShape();
+		shape.set(new Vec2[]{new Vec2(-5, -5), new Vec2(-5, 5), new Vec2(5, -5)}, 3);
+		body.createFixture(shape, 1);
+
 		/*{
 			CircleShape shape = new CircleShape();
 			shape.m_radius = 0.5f;

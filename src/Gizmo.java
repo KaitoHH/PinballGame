@@ -1,8 +1,10 @@
 import javafx.scene.shape.Circle;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
+import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 import java.awt.*;
 
@@ -18,6 +20,7 @@ public class Gizmo {
 	private static World world;
 	private static int size = 5;
 	private static int rowNum;
+	private static Body ground;
 
 	private Body body;
 	private int x;
@@ -49,17 +52,17 @@ public class Gizmo {
 		this.sizeRate = sizeRate;
 		this.shape = shape;
 		this.color = color;
-		createBody(shape, x, y, sizeRate);
+		createBody();
 	}
 
 	public Body getBody() {
 		return body;
 	}
 
-	private void createBody(GraphPanel.Shape shape, int x, int y, int sizeRate) {
+	public void createBody() {
 		switch (shape) {
 			case Triangle:
-				addSquare(x, y, sizeRate);
+				addTriangle(x, y, sizeRate);
 				break;
 			case Rectangle:
 				addSquare(x, y, sizeRate);
@@ -70,9 +73,16 @@ public class Gizmo {
 			case Ball:
 				addBall(x, y);
 				break;
+			case Paddle:
+				addPadel(x, y);
+				break;
 		}
 	}
 
+	public void updateBody() {
+		world.destroyBody(body);
+		createBody();
+	}
 
 	public int getX() {
 		return x;
@@ -134,6 +144,8 @@ public class Gizmo {
 			box.setAsBox(0, size * rowNum);
 		}
 		body.createFixture(box, 0);
+		if (x == 0 && y == 0)
+			ground = body;
 	}
 
 
@@ -177,5 +189,39 @@ public class Gizmo {
 		fixtureDef.shape = circle;
 		fixtureDef.restitution = 0.8f;
 		body.createFixture(fixtureDef);
+	}
+
+	private void addPadel(int x, int y) {
+		y = 20 - y;
+		BodyDef def = new BodyDef();
+		def.type = BodyType.DYNAMIC;
+		def.gravityScale = 100;
+		def.position.set(x * size + 0.875f * size, y * size - size);
+		body = world.createBody(def);
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox(0.125f * size, size);
+		body.createFixture(shape, 1);
+
+		RevoluteJointDef rjd = new RevoluteJointDef();
+		rjd.initialize(ground, body, new Vec2(((x + 1) * size), y * size));
+		rjd.lowerAngle = -0.25f * MathUtils.PI;
+		rjd.upperAngle = -rjd.lowerAngle;
+		rjd.enableLimit = true;
+		world.createJoint(rjd);
+	}
+
+	public void addTriangle(int x, int y, int sizeRate) {
+		y = 20 - y;
+		BodyDef def = new BodyDef();
+		def.type = BodyType.DYNAMIC;
+		def.gravityScale = 0;
+		int a = sizeRate * size;
+		def.position.set(x * size + a / 2.0f, y * size - a / 2.0f);
+		def.angle = (float) (-(float) angle / 180 * Math.PI);
+		body = world.createBody(def);
+		PolygonShape shape = new PolygonShape();
+		float r = a / 2.0f;
+		shape.set(new Vec2[]{new Vec2(-r, -r), new Vec2(-r, r), new Vec2(r, -r)}, 3);
+		body.createFixture(shape, 2);
 	}
 }

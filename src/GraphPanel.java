@@ -47,7 +47,7 @@ public class GraphPanel extends JPanel implements MouseListener {
             Gizmo gizmo = getGizmo(x, y);
             if (gizmo != null)
                 gizmo.setAngle(gizmo.getAngle() + 90);
-            //TODO
+            gizmo.updateBody();
         }
 
         getGraphics().clearRect(0, 0, getWidth(), getHeight());
@@ -163,6 +163,8 @@ public class GraphPanel extends JPanel implements MouseListener {
                 }
                 py = length - py;
                 g2D.setTransform(getTransform(px, py, gizmo.getBody().getAngle()));
+                if(gizmo.getShape()!=Shape.Ball)
+                    g2D.setTransform(getTransform(px + 0.5 * sizeRate * rowHeight, py + 0.5 * sizeRate * rowHeight, gizmo.getAngle()));
             }
             sizeRate = gizmo.getSizeRate();
             switch (gizmo.getShape()) {
@@ -244,8 +246,9 @@ public class GraphPanel extends JPanel implements MouseListener {
         public void run() {
             while (!dataSource.isBuildMode()) {
                 world.step(timeStep, velocityIterations, positionIterations);
-                getGraphics().clearRect(0, 0, getWidth(), getHeight());
-                paintComponent(getGraphics());
+                //getGraphics().clearRect(0, 0, getWidth(), getHeight());
+                //paintComponent(getGraphics());
+                repaint();
                 try {
                     Thread.sleep((long) (timeStep * 1000));
                 } catch (InterruptedException e) {
