@@ -12,267 +12,268 @@ import java.util.ArrayList;
  * Created by Hehongliang on 2016/11/13.
  */
 public class GraphPanel extends JPanel {
-	private static final Vec2 gravity = new Vec2(0, -10);
-	private RunThread thread;
-	float timeStep = 1.0f / 60.0f;
-	int velocityIterations = 6;
-	int positionIterations = 2;
+    private static final Vec2 gravity = new Vec2(0, -10);
+    private RunThread thread;
+    float timeStep = 1.0f / 60.0f;
+    int velocityIterations = 6;
+    int positionIterations = 2;
 
-	private World world;
+    private World world;
 
-	enum Shape {
-		Triangle, Rectangle, Circle, Paddle, Ball, Track
-	}
+    enum Shape {
+        Triangle, Rectangle, Circle, Paddle, Ball, Track
+    }
 
-	private final static int rowNum = 20;
-	private java.util.List<Gizmo> components = new ArrayList();
-	private int length = 200;
-	private double rowHeight = 10.0;
-	private toolBoxPanel dataSource;
-	private Gizmo gizmo;
+    private final static int rowNum = 20;
+    private java.util.List<Gizmo> components = new ArrayList();
+    private int length = 200;
+    private double rowHeight = 10.0;
+    private toolBoxPanel dataSource;
+    private Gizmo gizmo;
 
-	public GraphPanel() {
-		world = new World(gravity);
-		Gizmo.setWorld(world);
-		Gizmo.setRowNum(rowNum);
-		for (int i = 0; i <= 1; i++)
-			for (int j = 0; j <= 1; j++)
-				Gizmo.addSingleBoarder(i, j);
-		addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				length = getMinLength();
-				rowHeight = 1.0 * length / rowNum;
-				int x = (int) (1.0 * e.getX() / rowHeight);
-				int y = (int) (1.0 * e.getY() / rowHeight);
-				int sizeRate = dataSource.getSizeRate();
-				if (dataSource.curmode == toolBoxPanel.mode.gizmo) {
-					if (dataSource.getShape() == Shape.Ball)
-						sizeRate = 1;
-					else if (dataSource.getShape() == Shape.Paddle)
-						sizeRate = 2;
-					if (canAdd(x, y, sizeRate)) {
-						Gizmo temp = new Gizmo(x, y, sizeRate, dataSource.getShape(), dataSource.getGizmoColor(), dataSource.getRotate());
-						components.add(temp);
-						if (temp.getShape() == Shape.Paddle) {
-							gizmo = temp;
-						}
-					}
-				} else if (dataSource.curmode == toolBoxPanel.mode.rotate) {
-					Gizmo gizmo = getGizmo(x, y);
-					if (gizmo != null) {
-						gizmo.setAngle(gizmo.getAngle() + Math.PI / 2);
-						gizmo.updateBody();
-					}
-				}
+    public GraphPanel() {
+        world = new World(gravity);
+        Gizmo.setWorld(world);
+        Gizmo.setRowNum(rowNum);
+        for (int i = 0; i <= 1; i++)
+            for (int j = 0; j <= 1; j++)
+                Gizmo.addSingleBoarder(i, j);
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                length = getMinLength();
+                rowHeight = 1.0 * length / rowNum;
+                int x = (int) (1.0 * e.getX() / rowHeight);
+                int y = (int) (1.0 * e.getY() / rowHeight);
+                int sizeRate = dataSource.getSizeRate();
+                if (dataSource.curmode == toolBoxPanel.mode.gizmo) {
+                    if (dataSource.getShape() == Shape.Ball)
+                        sizeRate = 1;
+                    else if (dataSource.getShape() == Shape.Paddle)
+                        sizeRate = 2;
+                    if (canAdd(x, y, sizeRate)) {
+                        Gizmo temp = new Gizmo(x, y, sizeRate, dataSource.getShape(), dataSource.getGizmoColor(), dataSource.getRotate());
+                        components.add(temp);
+                        if (temp.getShape() == Shape.Paddle) {
+                            gizmo = temp;
+                        }
+                    }
+                } else if (dataSource.curmode == toolBoxPanel.mode.rotate) {
+                    Gizmo gizmo = getGizmo(x, y);
+                    if (gizmo != null) {
+                        gizmo.setAngle(gizmo.getAngle() + Math.PI / 2);
+                        gizmo.updateBody();
+                    }
+                }
 
-				getGraphics().clearRect(0, 0, getWidth(), getHeight());
-				//repaint(0,0,getWidth(),getHeight());
-				paintComponent(getGraphics());
-			}
+                getGraphics().clearRect(0, 0, getWidth(), getHeight());
+                //repaint(0,0,getWidth(),getHeight());
+                paintComponent(getGraphics());
+            }
 
-		});
-		addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyChar() == ' ') {
-					if (gizmo != null) {
-						gizmo.applyForce();
-					}
-				}
-			}
-		});
-		addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusLost(FocusEvent e) {
-				requestFocus();
-			}
-		});
-	}
+        });
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyChar() == ' ') {
+                    if (gizmo != null) {
+                        gizmo.applyForce();
+                    }
+                }
+            }
+        });
+        addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                requestFocus();
+            }
+        });
+    }
 
-	public boolean canAdd(int x, int y, int size) {
-		for (int i = x; i < x + size; i++) {
-			for (int j = y; j < y + size; j++) {
-				if (getGizmo(i, j) != null) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
+    public boolean canAdd(int x, int y, int size) {
+        for (int i = x; i < x + size; i++) {
+            for (int j = y; j < y + size; j++) {
+                if (getGizmo(i, j) != null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
-	public Gizmo getGizmo(int x, int y) {
-		for (int i = 0; i < components.size(); i++) {
-			Gizmo temp = components.get(i);
-			int tempX = temp.getX();
-			int tempY = temp.getY();
-			int sizeRate = temp.getSizeRate();
-			if (x >= tempX && x < tempX + sizeRate && y >= tempY && y < tempY + sizeRate)
-				return temp;
-		}
-		return null;
-	}
+    public Gizmo getGizmo(int x, int y) {
+        for (int i = 0; i < components.size(); i++) {
+            Gizmo temp = components.get(i);
+            int tempX = temp.getX();
+            int tempY = temp.getY();
+            int sizeRate = temp.getSizeRate();
+            if (x >= tempX && x < tempX + sizeRate && y >= tempY && y < tempY + sizeRate)
+                return temp;
+        }
+        return null;
+    }
 
-	public void setDataSource(toolBoxPanel panel) {
-		dataSource = panel;
-	}
+    public void setDataSource(toolBoxPanel panel) {
+        dataSource = panel;
+    }
 
-	public void build() {
-		if (dataSource.isBuildMode()) {
-			thread.interrupt();
-		} else {
-			thread = new RunThread();
-			thread.start();
-			this.requestFocus();
-		}
-	}
+    public void build() {
+        if (dataSource.isBuildMode()) {
+            thread.interrupt();
+        } else {
+            thread = new RunThread();
+            thread.start();
+            this.requestFocus();
+        }
+    }
 
-	public int getMinLength() {
-		return Math.min(getHeight(), getWidth()) - 15;
-	}
+    public int getMinLength() {
+        return Math.min(getHeight(), getWidth()) - 15;
+    }
 
-	@Override
-	public void paintComponent(Graphics g) {
-		length = getMinLength();
-		Graphics2D g2D = (Graphics2D) g;
-		rowHeight = 1.0 * length / rowNum;
-		for (int i = 0; i <= rowNum; i++) {
-			Line2D row = new Line2D.Double(0, rowHeight * i, length, rowHeight * i);
-			Line2D col = new Line2D.Double(rowHeight * i, 0, rowHeight * i, length);
-			g2D.draw(row);     //绘画横线
-			g2D.draw(col);     //绘画纵线
-		}
+    @Override
+    public void paintComponent(Graphics g) {
+        length = getMinLength();
+        Graphics2D g2D = (Graphics2D) g;
+        rowHeight = 1.0 * length / rowNum;
+        for (int i = 0; i <= rowNum; i++) {
+            Line2D row = new Line2D.Double(0, rowHeight * i, length, rowHeight * i);
+            Line2D col = new Line2D.Double(rowHeight * i, 0, rowHeight * i, length);
+            g2D.draw(row);     //绘画横线
+            g2D.draw(col);     //绘画纵线
+        }
 
-		double px, py;
-		int x, y;
-		int sizeRate;
-		for (int i = 0; i < components.size(); i++) {
-			Gizmo gizmo = components.get(i);
-			g2D.setColor(gizmo.getColor());
-			x = gizmo.getX();
-			y = gizmo.getY();
-			sizeRate = gizmo.getSizeRate();
-			g2D.setTransform(getTransform(0, 0, 0));
-			if (dataSource.isBuildMode()) {
-				px = Coordinate(x);
-				py = Coordinate(y);
-				if (gizmo.getShape() == Shape.Triangle) {
-					g2D.setTransform(getTransform(px + 0.5 * sizeRate * rowHeight, py + 0.5 * sizeRate * rowHeight, gizmo.getAngle()));
-				}
-			} else {
-				Vec2 position = gizmo.getBody().getPosition();
-				if (gizmo.getShape() != Shape.Ball) {
-					px = position.x / Gizmo.getLength() * length - gizmo.getSizeRate() * rowHeight / 2.0f;
-					py = position.y / Gizmo.getLength() * length + gizmo.getSizeRate() * rowHeight / 2.0f;
-				} else {
-					px = position.x / Gizmo.getLength() * length - rowHeight / 4.0f;
-					py = position.y / Gizmo.getLength() * length + rowHeight / 4.0f;
-				}
-				py = length - py;
-				//g2D.setTransform(getTransform(px, py, gizmo.getBody().getAngle()));
-				if (gizmo.getShape() != Shape.Ball)
-					g2D.setTransform(getTransform(px + 0.5 * sizeRate * rowHeight, py + 0.5 * sizeRate * rowHeight, -gizmo.getBody().getAngle()));
-				else if (gizmo.getShape() == Shape.Paddle)
-					g2D.setTransform(getTransform(px + 0.875 * rowHeight, py, -gizmo.getBody().getAngle()));
-			}
-			sizeRate = gizmo.getSizeRate();
-			switch (gizmo.getShape()) {
-				case Triangle:
-					g2D.fill(paintTriangle(px, py, sizeRate));
-					break;
-				case Rectangle:
-				case Track:
-					g2D.fill(paintSquare(px, py, sizeRate));
-					break;
-				case Circle:
-					g2D.fill(paintCircle(px, py, sizeRate));
-					break;
-				case Paddle:
-					g2D.fill(paintPaddle(px, py, gizmo.getRotate()));
-					break;
-				case Ball:
-					g2D.fill(paintBall(px, py));
-					break;
-			}
-		}
-	}
+        double px, py;
+        int x, y;
+        int sizeRate;
+        for (int i = 0; i < components.size(); i++) {
+            Gizmo gizmo = components.get(i);
+            g2D.setColor(gizmo.getColor());
+            x = gizmo.getX();
+            y = gizmo.getY();
+            sizeRate = gizmo.getSizeRate();
+            g2D.setTransform(getTransform(0, 0, 0));
+            if (dataSource.isBuildMode()) {
+                px = Coordinate(x);
+                py = Coordinate(y);
+                if (gizmo.getShape() == Shape.Triangle) {
+                    g2D.setTransform(getTransform(px + 0.5 * sizeRate * rowHeight, py + 0.5 * sizeRate * rowHeight, gizmo.getAngle()));
+                }
+            } else {
+                Vec2 position = gizmo.getBody().getPosition();
+                if (gizmo.getShape() != Shape.Ball) {
+                    px = position.x / Gizmo.getLength() * length - gizmo.getSizeRate() * rowHeight / 2.0f;
+                    py = position.y / Gizmo.getLength() * length + gizmo.getSizeRate() * rowHeight / 2.0f;
+                } else {
+                    px = position.x / Gizmo.getLength() * length - rowHeight / 4.0f;
+                    py = position.y / Gizmo.getLength() * length + rowHeight / 4.0f;
+                }
+                py = length - py;
+                //g2D.setTransform(getTransform(px, py, gizmo.getBody().getAngle()));
+                if (gizmo.getShape() != Shape.Ball)
+                    g2D.setTransform(getTransform(px + 0.5 * sizeRate * rowHeight, py + 0.5 * sizeRate * rowHeight, -gizmo.getBody().getAngle()));
+                else if (gizmo.getShape() == Shape.Paddle)
+                    g2D.setTransform(getTransform(px + 0.875 * rowHeight, py, -gizmo.getBody().getAngle()));
+            }
+            sizeRate = gizmo.getSizeRate();
+            switch (gizmo.getShape()) {
+                case Triangle:
+                    g2D.fill(paintTriangle(px, py, sizeRate));
+                    break;
+                case Rectangle:
+                case Track:
+                    g2D.fill(paintSquare(px, py, sizeRate));
+                    break;
+                case Circle:
+                    g2D.fill(paintCircle(px, py, sizeRate));
+                    break;
+                case Paddle:
+                    g2D.fill(paintPaddle(px, py, gizmo.getRotate()));
+                    break;
+                case Ball:
+                    g2D.fill(paintBall(px, py));
+                    break;
+            }
+        }
+    }
 
-	private AffineTransform getTransform(double x, double y, double angle) {
-		AffineTransform transform = new AffineTransform();
-		transform.rotate(angle, x, y);
-		return transform;
-	}
+    private AffineTransform getTransform(double x, double y, double angle) {
+        AffineTransform transform = new AffineTransform();
+        transform.rotate(angle, x, y);
+        return transform;
+    }
 
-	private double Coordinate(int i)//获取真实坐标
-	{
-		return i * rowHeight;
-	}
+    private double Coordinate(int i)//获取真实坐标
+    {
+        return i * rowHeight;
+    }
 
-	private Ellipse2D paintCircle(double x, double y, int size)
-	//(x,y)是圆形左上角的坐标，diameter是直径
-	{
-		double diameter = Coordinate(size);
-		Ellipse2D circle = new Ellipse2D.Double(x, y, diameter, diameter);
-		return circle;
-	}
+    private Ellipse2D paintCircle(double x, double y, int size)
+    //(x,y)是圆形左上角的坐标，diameter是直径
+    {
+        double diameter = Coordinate(size);
+        Ellipse2D circle = new Ellipse2D.Double(x, y, diameter, diameter);
+        return circle;
+    }
 
-	private Rectangle2D paintSquare(double x, double y, int size)
-	//(x,y)是正方形左上角的坐标，height是边长
-	{
-		double height = Coordinate(size);
-		Rectangle2D square = new Rectangle2D.Double(x, y, height, height);
-		return square;
-	}
+    private Rectangle2D paintSquare(double x, double y, int size)
+    //(x,y)是正方形左上角的坐标，height是边长
+    {
+        double height = Coordinate(size);
+        Rectangle2D square = new Rectangle2D.Double(x, y, height, height);
+        return square;
+    }
 
-	private GeneralPath paintTriangle(double x, double y, int size)
-	//(x,y)是直角三角形左上角的坐标，length是直角边长默认直角在左下角
-	{
-		double height = Coordinate(size);
-		GeneralPath triangle = new GeneralPath();
-		triangle.moveTo(x, y);
-		triangle.lineTo(x, y + height);
-		triangle.lineTo(x + height, y + height);
-		triangle.lineTo(x, y);
-		return triangle;
-	}
+    private GeneralPath paintTriangle(double x, double y, int size)
+    //(x,y)是直角三角形左上角的坐标，length是直角边长默认直角在左下角
+    {
+        double height = Coordinate(size);
+        GeneralPath triangle = new GeneralPath();
+        triangle.moveTo(x, y);
+        triangle.lineTo(x, y + height);
+        triangle.lineTo(x + height, y + height);
+        triangle.lineTo(x, y);
+        return triangle;
+    }
 
 
-	private RoundRectangle2D paintPaddle(double x, double y, toolBoxPanel.rotation rotate) {
-		if (rotate == toolBoxPanel.rotation.left) {
-			double X = x + 0.75 * rowHeight;
-			double Y = y;
-			double length = 0.25 * rowHeight;
-			double weight = Coordinate(2);
-			RoundRectangle2D d = new RoundRectangle2D.Double(X, Y, length, weight, 0.5 * length, 0.5 * length);
-			return d;
-		} else {
-			// TODO: 2016/11/19
-			return null;
-		}
-	}
+    private RoundRectangle2D paintPaddle(double x, double y, toolBoxPanel.rotation rotate) {
+        double X, Y;
+        double length = 0.25 * rowHeight;
+        double weight = Coordinate(2);
+        if (rotate == toolBoxPanel.rotation.left) {
+            X = x + 0.75 * rowHeight;
+            Y = y;
+        } else {
+            X = x;
+            Y = y;
+        }
+        RoundRectangle2D d = new RoundRectangle2D.Double(X, Y, length, weight, 0.5 * length, 0.5 * length);
+        return d;
+    }
 
-	private Ellipse2D paintBall(double x, double y) {
-		Ellipse2D circle = new Ellipse2D.Double(x, y, rowHeight / 2, rowHeight / 2);
-		return circle;
-	}
+    private Ellipse2D paintBall(double x, double y) {
+        Ellipse2D circle = new Ellipse2D.Double(x, y, rowHeight / 2, rowHeight / 2);
+        return circle;
+    }
 
-	class RunThread extends Thread {
-		@Override
-		public void run() {
-			while (!dataSource.isBuildMode()) {
-				world.step(timeStep, velocityIterations, positionIterations);
-				if (SystemStructure.isWindows()) {
-					getGraphics().clearRect(0, 0, getWidth(), getHeight());
-					paintComponent(getGraphics());
-				} else {
-					repaint();
-				}
-				try {
-					Thread.sleep((long) (timeStep * 1000));
-				} catch (InterruptedException e) {
-					break;
-				}
-			}
-		}
-	}
+    class RunThread extends Thread {
+        @Override
+        public void run() {
+            while (!dataSource.isBuildMode()) {
+                world.step(timeStep, velocityIterations, positionIterations);
+                if (SystemStructure.isWindows()) {
+                    getGraphics().clearRect(0, 0, getWidth(), getHeight());
+                    paintComponent(getGraphics());
+                } else {
+                    repaint();
+                }
+                try {
+                    Thread.sleep((long) (timeStep * 1000));
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        }
+    }
 }
