@@ -256,9 +256,12 @@ public class GraphPanel extends JPanel {
 		public void run() {
 			while (!dataSource.isBuildMode()) {
 				world.step(timeStep, velocityIterations, positionIterations);
-				//getGraphics().clearRect(0, 0, getWidth(), getHeight());
-				//paintComponent(getGraphics());
-				repaint();
+				if (SystemStructure.isWindows()) {
+					getGraphics().clearRect(0, 0, getWidth(), getHeight());
+					paintComponent(getGraphics());
+				} else {
+					repaint();
+				}
 				try {
 					Thread.sleep((long) (timeStep * 1000));
 				} catch (InterruptedException e) {
