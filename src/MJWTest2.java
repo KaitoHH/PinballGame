@@ -115,47 +115,7 @@ public class MJWTest2 extends TestbedTest {
 			ground.createFixture(shape, 0.0f);
 		}
 
-		BodyDef def = new BodyDef();
-		def.type = BodyType.DYNAMIC;
-		def.gravityScale = 0;
-		int a = 5;
-		def.position.set(-10, 10);
-		//def.angle = (float) (Math.PI / 2);
-		Body body = getWorld().createBody(def);
-		PolygonShape shape = new PolygonShape();
-		shape.set(new Vec2[]{new Vec2(-5, -5), new Vec2(-5, 5), new Vec2(5, -5)}, 3);
-		body.createFixture(shape, 1);
-
 		/*{
-			CircleShape shape = new CircleShape();
-			shape.m_radius = 0.5f;
-
-			BodyDef bd = new BodyDef();
-			bd.type = BodyType.DYNAMIC;
-
-			RevoluteJointDef rjd = new RevoluteJointDef();
-
-			bd.position.set(-10f, 20.0f);
-			Body body = getWorld().createBody(bd);
-			body.createFixture(shape, 5.0f);
-
-			float w = 100.0f;
-			body.setAngularVelocity(w);
-			body.setLinearVelocity(new Vec2(-8.0f * w, 0.0f));
-
-			rjd.initialize(ground, body, new Vec2(-10.0f, 12.0f));
-			rjd.motorSpeed = -1.0f * MathUtils.PI;
-			rjd.maxMotorTorque = 10000.0f;
-			rjd.enableMotor = false;
-			rjd.lowerAngle = -0.25f * MathUtils.PI;
-			rjd.upperAngle = 0.5f * MathUtils.PI;
-			rjd.enableLimit = true;
-			rjd.collideConnected = true;
-
-			RevoluteJoint m_joint = (RevoluteJoint) getWorld().createJoint(rjd);
-		}*/
-
-		{
 			CircleShape circle_shape = new CircleShape();
 			circle_shape.m_radius = 3.0f;
 
@@ -188,27 +148,30 @@ public class MJWTest2 extends TestbedTest {
 			rjd.upperAngle = -rjd.lowerAngle;
 			rjd.enableLimit = true;
 			m_world.createJoint(rjd);
-		}
-/*
-		// Tests mass computation of a small object far from the origin
-		{
-			BodyDef bodyDef = new BodyDef();
-			bodyDef.type = BodyType.DYNAMIC;
-			Body body = m_world.createBody(bodyDef);
-
-			PolygonShape polyShape = new PolygonShape();
-			Vec2 verts[] = new Vec2[3];
-			verts[0] = new Vec2(17.63f, 36.31f);
-			verts[1] = new Vec2(17.52f, 36.69f);
-			verts[2] = new Vec2(17.19f, 36.36f);
-			polyShape.set(verts, 3);
-
-			FixtureDef polyFixtureDef = new FixtureDef();
-			polyFixtureDef.shape = polyShape;
-			polyFixtureDef.density = 1;
-
-			body.createFixture(polyFixtureDef); // assertion hits inside here
 		}*/
+
+		int x = 3, y = 3;
+		int size = 1;
+
+		BodyDef def = new BodyDef();
+		def.type = BodyType.DYNAMIC;
+		def.gravityScale = 100;
+		def.position.set(x * size + 0.875f * size, y * size - size);
+		Body body = getWorld().createBody(def);
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox(0.125f * size, size);
+		body.createFixture(shape, 2.0f);
+
+		RevoluteJointDef rjd = new RevoluteJointDef();
+		rjd.initialize(ground, body, new Vec2(x * size + 0.875f * size, y * size));
+		rjd.upperAngle = 0;
+		rjd.lowerAngle = -(float) (Math.PI / 2.0);
+		rjd.enableLimit = true;
+		getWorld().createJoint(rjd);
+
+		myThread thread = new myThread();
+		thread.setBody(body);
+		thread.start();
 	}
 
 
@@ -217,5 +180,19 @@ public class MJWTest2 extends TestbedTest {
 		return "Couple of Things";
 	}
 
+	class myThread extends Thread {
+		Body body;
 
+		public void setBody(Body body) {
+			this.body = body;
+		}
+
+		@Override
+		public void run() {
+			int x = 3, y = 3, size = 1;
+			while (true) {
+				body.applyForce(new Vec2(10000f, 0), new Vec2(x * size + 0.875f * size, (y - 2) * size));
+			}
+		}
+	}
 }

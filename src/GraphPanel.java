@@ -3,20 +3,16 @@ import org.jbox2d.dynamics.World;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.*;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Hehongliang on 2016/11/13.
  */
-public class GraphPanel extends JPanel implements MouseListener {
-	private static final Vec2 graivty = new Vec2(0, -10);
+public class GraphPanel extends JPanel {
+	private static final Vec2 gravity = new Vec2(0, -10);
 	private RunThread thread;
 	float timeStep = 1.0f / 60.0f;
 	int velocityIterations = 6;
@@ -24,54 +20,8 @@ public class GraphPanel extends JPanel implements MouseListener {
 
 	private World world;
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		length = getMinLength();
-		rowHeight = 1.0 * length / rowNum;
-		int x = (int) (1.0 * e.getX() / rowHeight);
-		int y = (int) (1.0 * e.getY() / rowHeight);
-		int sizeRate = dataSource.getSizeRate();
-		if (dataSource.curmode == toolBoxPanel.mode.gizmo) {
-			if (dataSource.getShape() == Shape.Ball)
-				sizeRate = 1;
-			else if (dataSource.getShape() == Shape.Paddle)
-				sizeRate = 2;
-			if (canAdd(x, y, sizeRate)) {
-				Gizmo temp = new Gizmo(x, y, sizeRate, dataSource.getShape(), dataSource.getGizmoColor());
-				components.add(temp);
-			}
-		} else if (dataSource.curmode == toolBoxPanel.mode.rotate) {
-			Gizmo gizmo = getGizmo(x, y);
-			if (gizmo != null) {
-				gizmo.setAngle(gizmo.getAngle() + Math.PI / 2);
-				gizmo.updateBody();
-			}
-		}
-
-		getGraphics().clearRect(0, 0, getWidth(), getHeight());
-		//repaint(0,0,getWidth(),getHeight());
-		paintComponent(getGraphics());
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-
-	}
-
 	enum Shape {
-		Triangle, Rectangle, Circle, Paddle, Ball
+		Triangle, Rectangle, Circle, Paddle, Ball, Track
 	}
 
 	private final static int rowNum = 20;
@@ -79,15 +29,65 @@ public class GraphPanel extends JPanel implements MouseListener {
 	private int length = 200;
 	private double rowHeight = 10.0;
 	private toolBoxPanel dataSource;
+	private Gizmo gizmo;
 
 	public GraphPanel() {
-		world = new World(graivty);
+		world = new World(gravity);
 		Gizmo.setWorld(world);
 		Gizmo.setRowNum(rowNum);
 		for (int i = 0; i <= 1; i++)
 			for (int j = 0; j <= 1; j++)
 				Gizmo.addSingleBoarder(i, j);
-		addMouseListener(this);
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				length = getMinLength();
+				rowHeight = 1.0 * length / rowNum;
+				int x = (int) (1.0 * e.getX() / rowHeight);
+				int y = (int) (1.0 * e.getY() / rowHeight);
+				int sizeRate = dataSource.getSizeRate();
+				if (dataSource.curmode == toolBoxPanel.mode.gizmo) {
+					if (dataSource.getShape() == Shape.Ball)
+						sizeRate = 1;
+					else if (dataSource.getShape() == Shape.Paddle)
+						sizeRate = 2;
+					if (canAdd(x, y, sizeRate)) {
+						Gizmo temp = new Gizmo(x, y, sizeRate, dataSource.getShape(), dataSource.getGizmoColor());
+						components.add(temp);
+						if (temp.getShape() == Shape.Paddle) {
+							gizmo = temp;
+						}
+					}
+				} else if (dataSource.curmode == toolBoxPanel.mode.rotate) {
+					Gizmo gizmo = getGizmo(x, y);
+					if (gizmo != null) {
+						gizmo.setAngle(gizmo.getAngle() + Math.PI / 2);
+						gizmo.updateBody();
+					}
+				}
+
+				getGraphics().clearRect(0, 0, getWidth(), getHeight());
+				//repaint(0,0,getWidth(),getHeight());
+				paintComponent(getGraphics());
+			}
+
+		});
+		addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyChar() == ' ') {
+					if (gizmo != null) {
+						gizmo.applyForce();
+					}
+				}
+			}
+		});
+		addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				requestFocus();
+			}
+		});
 	}
 
 	public boolean canAdd(int x, int y, int size) {
@@ -123,6 +123,7 @@ public class GraphPanel extends JPanel implements MouseListener {
 		} else {
 			thread = new RunThread();
 			thread.start();
+			this.requestFocus();
 		}
 	}
 
@@ -171,6 +172,8 @@ public class GraphPanel extends JPanel implements MouseListener {
 				//g2D.setTransform(getTransform(px, py, gizmo.getBody().getAngle()));
 				if (gizmo.getShape() != Shape.Ball)
 					g2D.setTransform(getTransform(px + 0.5 * sizeRate * rowHeight, py + 0.5 * sizeRate * rowHeight, -gizmo.getBody().getAngle()));
+				else if (gizmo.getShape() == Shape.Paddle)
+					g2D.setTransform(getTransform(px + 0.875 * rowHeight, py, -gizmo.getBody().getAngle()));
 			}
 			sizeRate = gizmo.getSizeRate();
 			switch (gizmo.getShape()) {
@@ -178,6 +181,7 @@ public class GraphPanel extends JPanel implements MouseListener {
 					g2D.fill(paintTriangle(px, py, sizeRate));
 					break;
 				case Rectangle:
+				case Track:
 					g2D.fill(paintSquare(px, py, sizeRate));
 					break;
 				case Circle:

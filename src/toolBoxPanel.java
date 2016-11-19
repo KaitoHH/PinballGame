@@ -2,10 +2,7 @@ import com.sun.corba.se.impl.orbutil.graph.Graph;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -13,16 +10,25 @@ import java.util.ArrayList;
  */
 public class toolBoxPanel extends JPanel {
 	enum mode {
-		gizmo, rotate, enlarge, shrink
+		gizmo, rotate
+	}
+
+	enum rotation {
+		left, right
 	}
 
 	private JButton playButton;
 	mode curmode;
 	private int sizeRate = 1;
-
 	private boolean buildMode;
+	rotation rotate;
 	GraphPanel.Shape shape;
 	Color gizmoColor;
+
+
+	public rotation getRotate() {
+		return rotate;
+	}
 
 	public GraphPanel.Shape getShape() {
 		return shape;
@@ -106,23 +112,22 @@ public class toolBoxPanel extends JPanel {
 		ToolBoxButton planePaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/stick.png"));
 		planePaddleButton.setBounds(40, 120, 30, 30);
 		add(planePaddleButton);
-		planePaddleButton.setShape(GraphPanel.Shape.Rectangle);
-		planePaddleButton.setGizmoColor(Color.YELLOW);
-		planePaddleButton.setRotation(0);
+		planePaddleButton.setShape(GraphPanel.Shape.Track);
+		planePaddleButton.setGizmoColor(Color.ORANGE);
 
 		ToolBoxButton upPaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/stick2.png"));
 		upPaddleButton.setBounds(0, 160, 30, 30);
 		add(upPaddleButton);
 		upPaddleButton.setGizmoColor(Color.yellow);
 		upPaddleButton.setShape(GraphPanel.Shape.Paddle);
-		upPaddleButton.setRotation(3);
+		upPaddleButton.setRotate(rotation.left);
 
 		ToolBoxButton downPaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/stick_1.png"));
 		downPaddleButton.setBounds(40, 160, 30, 30);
 		add(downPaddleButton);
 		downPaddleButton.setGizmoColor(Color.YELLOW);
 		downPaddleButton.setShape(GraphPanel.Shape.Paddle);
-		downPaddleButton.setRotation(1);
+		downPaddleButton.setRotate(rotation.right);
 
 		ToolBoxButton rotateButton = new ToolBoxButton(new ImageIcon("PinballRes/rotateButtonIcon.png"));
 		rotateButton.setBounds(0, 240, 70, 30);
@@ -144,18 +149,7 @@ public class toolBoxPanel extends JPanel {
 		spinner.setBounds(0, 300, 70, 30);
 		add(spinner);
 
-
-		/*ToolBoxButton enlargeButton = new ToolBoxButton("Enlarge");
-		enlargeButton.setBounds(0, 300, 70, 30);
-		add(enlargeButton);
-		enlargeButton.setCurMode(ToolBoxButton.mode.enlarge);
-
-		ToolBoxButton shrinkButton = new ToolBoxButton("Shrink");
-		shrinkButton.setBounds(0, 340, 70, 30);
-		add(shrinkButton);
-		shrinkButton.setCurMode(ToolBoxButton.mode.shrink);*/
-
-//将button组成一个队列，方便重载button类的属性
+		//将button组成一个队列，方便重载button类的属性
 		compoments = new ArrayList();
 		compoments.add(circleButton);
 		compoments.add(redCircleButton);
@@ -185,6 +179,7 @@ public class toolBoxPanel extends JPanel {
 					curmode = mode.gizmo;
 					shape = button.getShape();
 					gizmoColor = button.getGizmoColor();
+					rotate = button.getRotate();
 				}
 			});
 		}
@@ -194,7 +189,7 @@ public class toolBoxPanel extends JPanel {
 class ToolBoxButton extends JButton {
 	private Color gizmoColor;
 	private GraphPanel.Shape shape;
-	private int rotation;
+	private toolBoxPanel.rotation rotate;
 
 	enum mode {gizmo, rotate, enlarge, shrink}
 
@@ -224,19 +219,12 @@ class ToolBoxButton extends JButton {
 		this.shape = shape;
 	}
 
-	public int getRotation() {
-		return rotation;
+	public void setRotate(toolBoxPanel.rotation rotate) {
+		this.rotate = rotate;
 	}
 
-	public void setRotation(int rotation) {
-		this.rotation = rotation;
+	public toolBoxPanel.rotation getRotate() {
+		return rotate;
 	}
 
-	public mode getCurMode() {
-		return curMode;
-	}
-
-	public void setCurMode(mode curMode) {
-		this.curMode = curMode;
-	}
 }

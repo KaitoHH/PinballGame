@@ -1,13 +1,11 @@
-import javafx.scene.shape.Circle;
+import com.sun.javafx.font.directwrite.RECT;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 import java.awt.*;
-
 
 /**
  * Project: PinballGame
@@ -18,7 +16,7 @@ import java.awt.*;
  */
 public class Gizmo {
 	private static World world;
-	private static int size = 5;
+	private final static int size = 5;
 	private static int rowNum;
 	private static Body ground;
 
@@ -36,10 +34,6 @@ public class Gizmo {
 
 	public static int getLength() {
 		return size * rowNum;
-	}
-
-	public static void setSize(int size) {
-		Gizmo.size = size;
 	}
 
 	public static void setRowNum(int rowNum) {
@@ -65,6 +59,7 @@ public class Gizmo {
 				addTriangle(x, y, sizeRate);
 				break;
 			case Rectangle:
+			case Track:
 				addSquare(x, y, sizeRate);
 				break;
 			case Circle:
@@ -74,7 +69,7 @@ public class Gizmo {
 				addBall(x, y);
 				break;
 			case Paddle:
-				addPadel(x, y);
+				addPaddle(x, y);
 				break;
 		}
 	}
@@ -143,7 +138,10 @@ public class Gizmo {
 		} else {
 			box.setAsBox(0, size * rowNum);
 		}
-		body.createFixture(box, 0);
+		FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = box;
+		fixtureDef.restitution = 1;
+		body.createFixture(fixtureDef);
 		if (x == 0 && y == 0)
 			ground = body;
 	}
@@ -152,14 +150,20 @@ public class Gizmo {
 	public void addSquare(int x, int y, int sizeRate) {
 		y = 20 - y;
 		BodyDef def = new BodyDef();
-		def.type = BodyType.DYNAMIC;
+		def.type = (shape == GraphPanel.Shape.Rectangle) ? BodyType.DYNAMIC : BodyType.STATIC;
 		def.gravityScale = 0;
 		int a = sizeRate * size;
 		def.position.set(x * size + a / 2.0f, y * size - a / 2.0f);
 		body = world.createBody(def);
 		PolygonShape box = new PolygonShape();
 		box.setAsBox(a / 2.0f, a / 2.0f);
-		body.createFixture(box, 2);
+		FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = box;
+		fixtureDef.density = 50;
+		fixtureDef.restitution = 1;
+		if (shape == GraphPanel.Shape.Track)
+			fixtureDef.restitution = 0;
+		body.createFixture(fixtureDef);
 	}
 
 
@@ -173,7 +177,11 @@ public class Gizmo {
 		body = world.createBody(def);
 		CircleShape circle = new CircleShape();
 		circle.setRadius(r / 2.0f);
-		body.createFixture(circle, 2);
+		FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = circle;
+		fixtureDef.density = 50;
+		fixtureDef.restitution = 1;
+		body.createFixture(fixtureDef);
 	}
 
 	private void addBall(int x, int y) {
@@ -185,13 +193,14 @@ public class Gizmo {
 		body = world.createBody(def);
 		CircleShape circle = new CircleShape();
 		circle.setRadius(r / 2.0f);
-		FixtureDef fixtureDef = new FixtureDef();
+		body.createFixture(circle, 1);
+		/*FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = circle;
 		fixtureDef.restitution = 0.8f;
-		body.createFixture(fixtureDef);
+		body.createFixture(fixtureDef);*/
 	}
 
-	private void addPadel(int x, int y) {
+	private void addPaddle(int x, int y) {
 		y = 20 - y;
 		BodyDef def = new BodyDef();
 		def.type = BodyType.DYNAMIC;
@@ -201,11 +210,10 @@ public class Gizmo {
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(0.125f * size, size);
 		body.createFixture(shape, 1);
-
 		RevoluteJointDef rjd = new RevoluteJointDef();
-		rjd.initialize(ground, body, new Vec2(((x + 1) * size), y * size));
-		rjd.lowerAngle = -0.25f * MathUtils.PI;
-		rjd.upperAngle = -rjd.lowerAngle;
+		rjd.initialize(ground, body, new Vec2(((x + 0.875f) * size), y * size));
+		rjd.upperAngle = 0;
+		rjd.lowerAngle = -(float) (Math.PI / 2);
 		rjd.enableLimit = true;
 		world.createJoint(rjd);
 	}
@@ -222,6 +230,15 @@ public class Gizmo {
 		PolygonShape shape = new PolygonShape();
 		float r = a / 2.0f;
 		shape.set(new Vec2[]{new Vec2(-r, -r), new Vec2(-r, r), new Vec2(r, -r)}, 3);
-		body.createFixture(shape, 2);
+		FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = shape;
+		fixtureDef.density = 50;
+		fixtureDef.restitution = 1;
+		body.createFixture(fixtureDef);
+	}
+
+	public void applyForce() {
+		//body.applyForce(new Vec2(-10000f, 0), new Vec2(x * size + 0.875f * size, (y - 2) * size));
+		body.applyAngularImpulse(-10000.0f);
 	}
 }
