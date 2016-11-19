@@ -224,15 +224,25 @@ public class Gizmo {
 		BodyDef def = new BodyDef();
 		def.type = BodyType.DYNAMIC;
 		def.gravityScale = 100;
-		def.position.set(x * size + 0.875f * size, y * size - size);
+		if (getRotate() == toolBoxPanel.rotation.left)
+			def.position.set(x * size + 0.875f * size, y * size - size);
+		else
+			def.position.set(x * size + 0.125f * size, y * size - size);
 		body = world.createBody(def);
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(0.125f * size, size);
 		body.createFixture(shape, 1);
 		RevoluteJointDef rjd = new RevoluteJointDef();
-		rjd.initialize(ground, body, new Vec2(((x + 0.875f) * size), y * size));
-		rjd.upperAngle = 0;
-		rjd.lowerAngle = -(float) (Math.PI / 2);
+		if (getRotate() == toolBoxPanel.rotation.left) {
+			rjd.initialize(ground, body, new Vec2(((x + 0.875f) * size), y * size));
+			rjd.upperAngle = 0;
+			rjd.lowerAngle = -(float) (Math.PI / 2);
+		} else {
+			rjd.initialize(ground, body, new Vec2((x + 0.125f) * size, y * size));
+			rjd.lowerAngle = 0;
+			rjd.upperAngle = (float) (Math.PI / 2);
+		}
+
 		rjd.enableLimit = true;
 		world.createJoint(rjd);
 	}
@@ -259,6 +269,6 @@ public class Gizmo {
 	}
 
 	public void applyForce() {
-		body.applyAngularImpulse(-10000.0f);
+		body.applyAngularImpulse(10000.0f * (getRotate() == toolBoxPanel.rotation.left ? -1 : 1));
 	}
 }
