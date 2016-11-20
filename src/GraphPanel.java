@@ -25,7 +25,7 @@ public class GraphPanel extends JPanel {
 	private World world;
 
 	enum Shape {
-		Triangle, Rectangle, Circle, Paddle, Ball, Track, Absorber
+		Triangle, Rectangle, Circle, Paddle, Ball, Track, Absorber,Slider
 	}
 
 	private final static int rowNum = 20;
@@ -209,9 +209,11 @@ public class GraphPanel extends JPanel {
 					g2D.fill(paintTriangle(px, py, sizeRate));
 					break;
 				case Rectangle:
-				case Track:
-				case Absorber:
-					g2D.fill(paintSquare(px, py, sizeRate));
+                case Track:
+				    g2D.fill(paintSquare(px, py, sizeRate));
+                    break;
+                case Slider:
+					g2D.fill(paintSlider(px,py));
 					break;
 				case Circle:
 					g2D.fill(paintCircle(px, py, sizeRate));
@@ -222,6 +224,11 @@ public class GraphPanel extends JPanel {
 				case Ball:
 					g2D.fill(paintBall(px, py));
 					break;
+                case Absorber:
+                    g2D.fill(paintSquare(px, py, sizeRate));
+                    g2D.setColor(Color.red);
+                    g2D.draw(paintSmallcircle(px,py,sizeRate*0.7,sizeRate));
+                    break;
 			}
 		}
 	}
@@ -232,18 +239,29 @@ public class GraphPanel extends JPanel {
 		return transform;
 	}
 
-	private double Coordinate(int i)//获取真实坐标
+	private double Coordinate(double i)//获取真实坐标
 	{
 		return i * rowHeight;
 	}
 
-	private Ellipse2D paintCircle(double x, double y, int size)
-	//(x,y)是圆形左上角的坐标，diameter是直径
+	private Ellipse2D paintCircle(double x, double y, double size)
+	//(x,y)是圆形中心的坐标，diameter是直径
 	{
 		double diameter = Coordinate(size);
 		Ellipse2D circle = new Ellipse2D.Double(x, y, diameter, diameter);
 		return circle;
 	}
+
+	private Ellipse2D paintSmallcircle(double x,double y,double size,double sizeRate)
+    {
+        double xx = x+0.5*Coordinate(sizeRate);
+        double yy = y+0.5*Coordinate(sizeRate);
+        double px=xx-0.5*Coordinate(size);
+        double py=yy-0.5*Coordinate(size);
+        double diameter=Coordinate(size);
+        Ellipse2D circle=new Ellipse2D.Double(px,py,diameter,diameter);
+        return circle;
+    }
 
 	private Rectangle2D paintSquare(double x, double y, int size)
 	//(x,y)是正方形左上角的坐标，height是边长
@@ -280,6 +298,15 @@ public class GraphPanel extends JPanel {
 		RoundRectangle2D d = new RoundRectangle2D.Double(X, Y, length, weight, 0.5 * length, 0.5 * length);
 		return d;
 	}
+
+	private RoundRectangle2D paintSlider(double x,double y){
+        double length=Coordinate(1);
+        double weight=Coordinate(0.25);
+        double px=x;
+        double py=y+Coordinate(0.75);
+        RoundRectangle2D slider=new RoundRectangle2D.Double(px,py,length,weight,0.25*length,0.5*length);
+        return slider;
+    }
 
 	private Ellipse2D paintBall(double x, double y) {
 		Ellipse2D circle = new Ellipse2D.Double(x, y, rowHeight / 2, rowHeight / 2);

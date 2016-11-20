@@ -182,12 +182,8 @@ public class toolBoxPanel extends JPanel {
         ToolBoxButton movePaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/planeMovePaddle.png"));
         movePaddleButton.setBounds(0, 390, 70, 30);
         add(movePaddleButton);
-        movePaddleButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                curmode = mode.move;
-            }
-        });
+        movePaddleButton.setGizmoColor(Color.yellow);
+        movePaddleButton.setShape(GraphPanel.Shape.Slider);
 
 
         SpinnerModel model = new SpinnerNumberModel(1, 1, 5, 1);
@@ -215,6 +211,7 @@ public class toolBoxPanel extends JPanel {
         compoments.add(planePaddleButton);
         compoments.add(upPaddleButton);
         compoments.add(downPaddleButton);
+        compoments.add(movePaddleButton);
 
         addButtonActionListener();
 
