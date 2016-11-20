@@ -50,36 +50,32 @@ public class toolBoxPanel extends JPanel {
         JLabel basicLabel = new JLabel("Basic", JLabel.CENTER);
         Font basicLabelFont = new Font("等线light", Font.ITALIC, 12);
         basicLabel.setFont(basicLabelFont);
-        basicLabel.setBounds(0, 120, 70, 30);
+        basicLabel.setBounds(0, 10, 70, 30);
         add(basicLabel);
-
-        JLabel segmentation=new JLabel("----------------");
-        segmentation.setBounds(0,140,70,10);
-        add(segmentation);
 
         JLabel advancedLabel = new JLabel("Advanced", JLabel.CENTER);
         Font advancedLabelFont = new Font("等线light", Font.ITALIC, 12);
         advancedLabel.setFont(advancedLabelFont);
-        advancedLabel.setBounds(0, 420, 70, 30);
+        advancedLabel.setBounds(0, 170, 70, 30);
         add(advancedLabel);
 
         JLabel operationLabel = new JLabel("Operation", JLabel.CENTER);
         Font operationLabelFont = new Font("等线light", Font.ITALIC, 12);
         operationLabel.setFont(operationLabelFont);
-        operationLabel.setBounds(0, 780, 70, 30);
+        operationLabel.setBounds(0, 440, 70, 30);
         add(operationLabel);
 
         JLabel sizeLabel = new JLabel("Adjust Size", JLabel.CENTER);
         Font sizeLabelFont = new Font("等线light", Font.ITALIC, 12);
         sizeLabel.setFont(sizeLabelFont);
-        sizeLabel.setBounds(0, 630, 70, 30);
+        sizeLabel.setBounds(0, 590, 70, 30);
         add(sizeLabel);
 
         //更改游戏模式，开始游戏，暂停游戏切换回Build Model
         playButton = new JButton("Play!");
         Font font = new Font("等线light", Font.BOLD, 12);
         playButton.setFont(font);
-        playButton.setBounds(0, 750, 70, 30);
+        playButton.setBounds(0, 550, 70, 30);
         playButton.setToolTipText("Start Gizmo!");
         add(playButton);
         buildMode = true;
@@ -98,79 +94,79 @@ public class toolBoxPanel extends JPanel {
         });
 
         ToolBoxButton circleButton = new ToolBoxButton(new ImageIcon("PinballRes/Circle_Green.png"));
-        circleButton.setBounds(0, 0, 30, 30);
+        circleButton.setBounds(0, 40, 30, 30);
         circleButton.setShape(GraphPanel.Shape.Ball);
         circleButton.setGizmoColor(Color.green);
         add(circleButton);
         circleButton.setToolTipText("Create a ball component on the panel.");
 
         ToolBoxButton boxButton = new ToolBoxButton(new ImageIcon("PinballRes/square.png"));
-        boxButton.setBounds(40, 0, 30, 30);
+        boxButton.setBounds(40, 40, 30, 30);
         add(boxButton);
         boxButton.setShape(GraphPanel.Shape.Rectangle);
         boxButton.setGizmoColor(Color.BLUE);
         boxButton.setToolTipText("Create a blue rectangle on the panel.");
 
         ToolBoxButton purpleCircleButton = new ToolBoxButton(new ImageIcon("PinballRes/Purple_Circle.png"));
-        purpleCircleButton.setBounds(0, 40, 30, 30);
+        purpleCircleButton.setBounds(0, 80, 30, 30);
         add(purpleCircleButton);
         purpleCircleButton.setShape(GraphPanel.Shape.Circle);
         purpleCircleButton.setGizmoColor(Color.MAGENTA);
 
         ToolBoxButton blankButton = new ToolBoxButton(new ImageIcon("PinballRes/Absorber_Icon.png"));
-        blankButton.setBounds(0, 310, 70, 70);
+        blankButton.setBounds(0, 320, 70, 70);
         add(blankButton);
         blankButton.setShape(GraphPanel.Shape.Absorber);
         blankButton.setGizmoColor(Color.WHITE);
         blankButton.setToolTipText("This button let you create an absorber on the panel. Read the documents for more details...");
 
         ToolBoxButton rctangleButton = new ToolBoxButton(new ImageIcon("PinballRes/Ruler_Triangle_E.png"));
-        rctangleButton.setBounds(0, 80, 30, 30);
+        rctangleButton.setBounds(0, 120, 30, 30);
         add(rctangleButton);
         rctangleButton.setGizmoColor(Color.BLACK);
         rctangleButton.setShape(GraphPanel.Shape.Triangle);
 
         ToolBoxButton redCircleButton = new ToolBoxButton(new ImageIcon("PinballRes/Red_Circle.png"));
-        redCircleButton.setBounds(40, 80, 30, 30);
+        redCircleButton.setBounds(40, 120, 30, 30);
         add(redCircleButton);
         redCircleButton.setShape(GraphPanel.Shape.Circle);
         redCircleButton.setGizmoColor(Color.RED);
 
         ToolBoxButton grayButton = new ToolBoxButton(new ImageIcon("PinballRes/Gray_Circle.png"));
-        grayButton.setBounds(40, 40, 30, 30);
+        grayButton.setBounds(40, 80, 30, 30);
         add(grayButton);
         grayButton.setGizmoColor(Color.GRAY);
         grayButton.setShape(GraphPanel.Shape.Circle);
 
         ToolBoxButton planePaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/Plane_Paddle.png"));
-        planePaddleButton.setBounds(0, 160, 70, 30);
+        planePaddleButton.setBounds(0, 200, 70, 30);
         add(planePaddleButton);
         planePaddleButton.setShape(GraphPanel.Shape.Track);
         planePaddleButton.setGizmoColor(Color.ORANGE);
 
         ToolBoxButton upPaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/leftUpPaddle.png"));
-        upPaddleButton.setBounds(0, 210, 70, 30);
+        upPaddleButton.setBounds(0, 240, 70, 30);
         add(upPaddleButton);
         upPaddleButton.setGizmoColor(Color.YELLOW);
         upPaddleButton.setShape(GraphPanel.Shape.Paddle);
         upPaddleButton.setRotate(rotation.left);
 
         ToolBoxButton downPaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/rightUpPaddle.png"));
-        downPaddleButton.setBounds(0, 260, 70, 30);
+        downPaddleButton.setBounds(0, 280, 70, 30);
         add(downPaddleButton);
         downPaddleButton.setGizmoColor(Color.YELLOW);
         downPaddleButton.setShape(GraphPanel.Shape.Paddle);
         downPaddleButton.setRotate(rotation.right);
 
         ToolBoxButton rotateButton = new ToolBoxButton(new ImageIcon("PinballRes/rotateButtonIcon.png"));
-        rotateButton.setBounds(0, 670, 70, 30);
+        rotateButton.setBounds(0, 470, 70, 30);
         add(rotateButton);
         rotateButton.addActionListener(e -> {
             curmode = mode.rotate;
         });
 
         ToolBoxButton deleteButton = new ToolBoxButton(new ImageIcon("PinballRes/Delete_Button.png"));
-        deleteButton.setBounds(0, 710, 70, 30);
+        deleteButton.setBounds(0, 510, 70, 30);
         add(deleteButton);
         deleteButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -180,7 +176,7 @@ public class toolBoxPanel extends JPanel {
         });
 
         ToolBoxButton movePaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/planeMovePaddle.png"));
-        movePaddleButton.setBounds(0, 390, 70, 30);
+        movePaddleButton.setBounds(0, 400, 70, 30);
         add(movePaddleButton);
         movePaddleButton.setGizmoColor(Color.yellow);
         movePaddleButton.setShape(GraphPanel.Shape.Slider);
@@ -196,7 +192,7 @@ public class toolBoxPanel extends JPanel {
             sizeRate = (int) spinner.getValue();
             textField.setText(spinner.getValue().toString());
         });
-        spinner.setBounds(0, 600, 70, 30);
+        spinner.setBounds(0, 620, 70, 30);
         add(spinner);
 
         //将button组成一个队列，方便重载button类的属性
