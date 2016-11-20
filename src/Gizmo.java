@@ -311,4 +311,5 @@ public class Gizmo {
 	public void applyForce() {
 		body.applyAngularImpulse(10000.0f * (getRotate() == toolBoxPanel.rotation.left ? -1 : 1));
 	}
+
 }

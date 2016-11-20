@@ -37,7 +37,7 @@ public class GameWindow {
 
 
 		JFrame frame = new JFrame("GameWindow");
-		frame.setJMenuBar(new GameMenu());
+		frame.setJMenuBar(new GameMenu(graphPanel));
 		frame.setSize(800, 800);
 		frame.setContentPane(panel1);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

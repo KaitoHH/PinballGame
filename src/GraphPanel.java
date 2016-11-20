@@ -72,12 +72,8 @@ public class GraphPanel extends JPanel {
 						components.remove(gizmo);
 					}
 				}
-
-				getGraphics().clearRect(0, 0, getWidth(), getHeight());
-				//repaint(0,0,getWidth(),getHeight());
-				paintComponent(getGraphics());
+				updateScreen();
 			}
-
 		});
 		addKeyListener(new KeyAdapter() {
 			@Override
@@ -129,6 +125,9 @@ public class GraphPanel extends JPanel {
 	public void build() {
 		if (dataSource.isBuildMode()) {
 			thread.interrupt();
+			for (Gizmo gizmo : components) {
+				gizmo.updateBody();
+			}
 		} else {
 			thread = new RunThread();
 			thread.start();
@@ -159,8 +158,6 @@ public class GraphPanel extends JPanel {
 			Gizmo gizmo = components.get(i);
 			if (gizmo.getBody().getUserData() == null) {
 				world.destroyBody(gizmo.getBody());
-				components.remove(gizmo);
-				i--;
 				continue;
 			}
 			g2D.setColor(gizmo.getColor());
@@ -294,18 +291,36 @@ public class GraphPanel extends JPanel {
 		public void run() {
 			while (!dataSource.isBuildMode()) {
 				world.step(timeStep, velocityIterations, positionIterations);
-				if (SystemStructure.isWindows()) {
-					getGraphics().clearRect(0, 0, getWidth(), getHeight());
-					paintComponent(getGraphics());
-				} else {
-					repaint();
-				}
+				updateScreen();
 				try {
 					Thread.sleep((long) (timeStep * 1000));
 				} catch (InterruptedException e) {
 					break;
 				}
 			}
+			updateScreen();
 		}
+	}
+
+	private void updateScreen() {
+		if (SystemStructure.isWindows()) {
+			getGraphics().clearRect(0, 0, getWidth(), getHeight());
+			paintComponent(getGraphics());
+		} else {
+			repaint();
+		}
+	}
+
+	public void newScene() {
+		components.clear();
+		updateScreen();
+	}
+
+	public void saveScene(){
+
+	}
+
+	public void loadScene(){
+
 	}
 }

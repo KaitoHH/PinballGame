@@ -10,7 +10,7 @@ import java.io.File;
  * All rights reserved.
  */
 public class GameMenu extends JMenuBar {
-	public GameMenu() {
+	public GameMenu(GraphPanel panel) {
 		JMenu fileMenu = new JMenu("文件");
 		JMenu aboutMenu = new JMenu("帮助");
 		JMenuItem newItem = new JMenuItem("新建");
@@ -24,11 +24,17 @@ public class GameMenu extends JMenuBar {
 		add(fileMenu);
 		add(aboutMenu);
 
-		newItem.addActionListener(e -> System.out.println("new"));
+		newItem.addActionListener(e -> {
+			panel.newScene();
+		});
 		saveItem.addActionListener(e -> {
 			JFileChooser chooser = new JFileChooser();
 			chooser.showSaveDialog(this);
 			File file = chooser.getSelectedFile();
+			String fileName = file.getName();
+			if (!fileName.endsWith(".psc")) {
+				fileName += ".psc";
+			}
 			System.out.println(file.getAbsoluteFile());
 		});
 		loadItem.addActionListener(e -> {
