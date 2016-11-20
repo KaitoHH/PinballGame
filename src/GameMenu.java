@@ -28,6 +28,7 @@ public class GameMenu extends JMenuBar {
 			panel.newScene();
 		});
 		saveItem.addActionListener(e -> {
+			panel.setCanFocus(false);
 			JFileChooser chooser = new JFileChooser();
 			chooser.showSaveDialog(this);
 			File file = chooser.getSelectedFile();
@@ -36,13 +37,16 @@ public class GameMenu extends JMenuBar {
 				fileName += ".psc";
 			}
 			panel.saveScene(fileName);
+			panel.setCanFocus(true);
 		});
 		loadItem.addActionListener(e -> {
+			panel.setCanFocus(false);
 			JFileChooser chooser = new JFileChooser();
 			chooser.setFileFilter(new PinballFileFilter());
 			chooser.showOpenDialog(this);
 			File file = chooser.getSelectedFile();
 			panel.loadScene(file.getAbsolutePath());
+			panel.setCanFocus(true);
 		});
 	}
 

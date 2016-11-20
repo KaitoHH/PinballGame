@@ -43,7 +43,8 @@ public class GameWindow {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
-	public void draw(){
-	    graphPanel.build();
-    }
+
+	public void draw() {
+		graphPanel.build();
+	}
 }

@@ -1,6 +1,9 @@
+import javafx.scene.shape.*;
+import javafx.scene.shape.Polygon;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
+import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
@@ -23,9 +26,10 @@ public class GraphPanel extends JPanel {
 	int positionIterations = 2;
 
 	private World world;
+	private boolean canFocus = true;
 
 	enum Shape {
-		Triangle, Rectangle, Circle, Paddle, Ball, Track, Absorber,Slider
+		Triangle, Rectangle, Circle, Paddle, Ball, Track, Absorber, Slider
 	}
 
 	private final static int rowNum = 20;
@@ -49,6 +53,8 @@ public class GraphPanel extends JPanel {
 						sizeRate = 1;
 					else if (dataSource.getShape() == Shape.Paddle)
 						sizeRate = 2;
+					else if (dataSource.getShape() == Shape.Slider)
+						sizeRate = 1;
 					if (canAdd(x, y, sizeRate)) {
 						Gizmo temp = new Gizmo(x, y, sizeRate, dataSource.getShape(), dataSource.getGizmoColor(), dataSource.getRotate());
 						components.add(temp);
@@ -72,10 +78,17 @@ public class GraphPanel extends JPanel {
 		addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				if (dataSource.isBuildMode()) return;
 				if (e.getKeyChar() == ' ') {
 					for (Gizmo gizmo : components) {
 						if (gizmo.getShape() == Shape.Paddle) {
 							gizmo.applyForce();
+						}
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					for (Gizmo gizmo : components) {
+						if (gizmo.getShape() == Shape.Slider) {
+							gizmo.move(e.getKeyCode() == KeyEvent.VK_LEFT ? -5 : 5);
 						}
 					}
 				}
@@ -84,7 +97,8 @@ public class GraphPanel extends JPanel {
 		addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent e) {
-				requestFocus();
+				if (canFocus)
+					requestFocus();
 			}
 		});
 	}
@@ -158,6 +172,7 @@ public class GraphPanel extends JPanel {
 		int x, y;
 		int sizeRate;
 		for (int i = 0; i < components.size(); i++) {
+			AffineTransform transform = (AffineTransform) g2D.getTransform().clone();
 			Gizmo gizmo = components.get(i);
 			if (gizmo.getBody().getUserData() == null) {
 				world.destroyBody(gizmo.getBody());
@@ -167,12 +182,11 @@ public class GraphPanel extends JPanel {
 			x = gizmo.getX();
 			y = gizmo.getY();
 			sizeRate = gizmo.getSizeRate();
-			g2D.setTransform(getTransform(0, 0, 0));
 			if (dataSource.isBuildMode()) {
 				px = Coordinate(x);
 				py = Coordinate(y);
 				if (gizmo.getShape() == Shape.Triangle) {
-					g2D.setTransform(getTransform(px + 0.5 * sizeRate * rowHeight, py + 0.5 * sizeRate * rowHeight, gizmo.getAngle()));
+					g2D.setTransform(getTransform(px + 0.5 * sizeRate * rowHeight, py + 0.5 * sizeRate * rowHeight, -gizmo.getBody().getAngle(), g2D.getTransform()));
 				}
 			} else {
 				Vec2 position = gizmo.getBody().getPosition();
@@ -187,6 +201,9 @@ public class GraphPanel extends JPanel {
 							px -= 0.125 * rowHeight;
 							py += rowHeight;
 						}
+					} else if (gizmo.getShape() == Shape.Slider) {
+						px -= rowHeight / 2.0f;
+						py += 0.875f * rowHeight;
 					} else {
 						px -= gizmo.getSizeRate() * rowHeight / 2.0f;
 						py += gizmo.getSizeRate() * rowHeight / 2.0f;
@@ -196,14 +213,13 @@ public class GraphPanel extends JPanel {
 					py += rowHeight / 4.0f;
 				}
 				py = length - py;
-				//g2D.setTransform(getTransform(px, py, gizmo.getBody().getAngle()));
 				if (gizmo.getShape() == Shape.Paddle)
 					if (gizmo.getRotate() == toolBoxPanel.rotation.left)
-						g2D.setTransform(getTransform(px + 0.875 * rowHeight, py + rowHeight, -gizmo.getBody().getAngle()));
+						g2D.setTransform(getTransform(px + 0.875 * rowHeight, py + rowHeight, -gizmo.getBody().getAngle(), g2D.getTransform()));
 					else
-						g2D.setTransform(getTransform(px + 0.125 * rowHeight, py + rowHeight, -gizmo.getBody().getAngle()));
+						g2D.setTransform(getTransform(px + 0.125 * rowHeight, py + rowHeight, -gizmo.getBody().getAngle(), g2D.getTransform()));
 				else if (gizmo.getShape() != Shape.Ball)
-					g2D.setTransform(getTransform(px + 0.5 * sizeRate * rowHeight, py + 0.5 * sizeRate * rowHeight, -gizmo.getBody().getAngle()));
+					g2D.setTransform(getTransform(px + 0.5 * sizeRate * rowHeight, py + 0.5 * sizeRate * rowHeight, -gizmo.getBody().getAngle(), g2D.getTransform()));
 
 			}
 			sizeRate = gizmo.getSizeRate();
@@ -212,11 +228,11 @@ public class GraphPanel extends JPanel {
 					g2D.fill(paintTriangle(px, py, sizeRate));
 					break;
 				case Rectangle:
-                case Track:
-				    g2D.fill(paintSquare(px, py, sizeRate));
-                    break;
-                case Slider:
-					g2D.fill(paintSlider(px,py));
+				case Track:
+					g2D.fill(paintSquare(px, py, sizeRate));
+					break;
+				case Slider:
+					g2D.fill(paintSlider(px, py));
 					break;
 				case Circle:
 					g2D.fill(paintCircle(px, py, sizeRate));
@@ -227,17 +243,18 @@ public class GraphPanel extends JPanel {
 				case Ball:
 					g2D.fill(paintBall(px, py));
 					break;
-                case Absorber:
-                    g2D.fill(paintSquare(px, py, sizeRate));
-                    g2D.setColor(Color.red);
-                    g2D.draw(paintSmallcircle(px,py,sizeRate*0.7,sizeRate));
-                    break;
+				case Absorber:
+					g2D.fill(paintSquare(px, py, sizeRate));
+					g2D.setColor(Color.red);
+					g2D.draw(paintSmallcircle(px, py, sizeRate * 0.7, sizeRate));
+					break;
 			}
+			g2D.setTransform(transform);
 		}
+
 	}
 
-	private AffineTransform getTransform(double x, double y, double angle) {
-		AffineTransform transform = new AffineTransform();
+	private AffineTransform getTransform(double x, double y, double angle, AffineTransform transform) {
 		transform.rotate(angle, x, y);
 		return transform;
 	}
@@ -255,16 +272,15 @@ public class GraphPanel extends JPanel {
 		return circle;
 	}
 
-	private Ellipse2D paintSmallcircle(double x,double y,double size,double sizeRate)
-    {
-        double xx = x+0.5*Coordinate(sizeRate);
-        double yy = y+0.5*Coordinate(sizeRate);
-        double px=xx-0.5*Coordinate(size);
-        double py=yy-0.5*Coordinate(size);
-        double diameter=Coordinate(size);
-        Ellipse2D circle=new Ellipse2D.Double(px,py,diameter,diameter);
-        return circle;
-    }
+	private Ellipse2D paintSmallcircle(double x, double y, double size, double sizeRate) {
+		double xx = x + 0.5 * Coordinate(sizeRate);
+		double yy = y + 0.5 * Coordinate(sizeRate);
+		double px = xx - 0.5 * Coordinate(size);
+		double py = yy - 0.5 * Coordinate(size);
+		double diameter = Coordinate(size);
+		Ellipse2D circle = new Ellipse2D.Double(px, py, diameter, diameter);
+		return circle;
+	}
 
 	private Rectangle2D paintSquare(double x, double y, int size)
 	//(x,y)是正方形左上角的坐标，height是边长
@@ -278,11 +294,12 @@ public class GraphPanel extends JPanel {
 	//(x,y)是直角三角形左上角的坐标，length是直角边长默认直角在左下角
 	{
 		double height = Coordinate(size);
-		GeneralPath triangle = new GeneralPath();
+		GeneralPath triangle = new GeneralPath(Path2D.WIND_EVEN_ODD);
 		triangle.moveTo(x, y);
 		triangle.lineTo(x, y + height);
 		triangle.lineTo(x + height, y + height);
-		triangle.lineTo(x, y);
+		//triangle.lineTo(x, y);
+		triangle.closePath();
 		return triangle;
 	}
 
@@ -302,14 +319,14 @@ public class GraphPanel extends JPanel {
 		return d;
 	}
 
-	private RoundRectangle2D paintSlider(double x,double y){
-        double length=Coordinate(1);
-        double weight=Coordinate(0.25);
-        double px=x;
-        double py=y+Coordinate(0.75);
-        RoundRectangle2D slider=new RoundRectangle2D.Double(px,py,length,weight,0.25*length,0.5*length);
-        return slider;
-    }
+	private RoundRectangle2D paintSlider(double x, double y) {
+		double length = Coordinate(1);
+		double weight = Coordinate(0.25);
+		double px = x;
+		double py = y + Coordinate(0.75);
+		RoundRectangle2D slider = new RoundRectangle2D.Double(px, py, length, weight, 0.25 * length, 0.5 * length);
+		return slider;
+	}
 
 	private Ellipse2D paintBall(double x, double y) {
 		Ellipse2D circle = new Ellipse2D.Double(x, y, rowHeight / 2, rowHeight / 2);
@@ -330,6 +347,10 @@ public class GraphPanel extends JPanel {
 			}
 			updateScreen();
 		}
+	}
+
+	public void setCanFocus(boolean canFocus) {
+		this.canFocus = canFocus;
 	}
 
 	private void updateScreen() {
