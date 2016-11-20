@@ -1,3 +1,4 @@
+import com.sun.xml.internal.ws.developer.Serialization;
 import javafx.scene.shape.Circle;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
@@ -10,6 +11,7 @@ import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.Collections;
 
 import static com.sun.tools.javac.jvm.ByteCodes.swap;
@@ -104,6 +106,7 @@ public class Gizmo {
 			case Rectangle:
 			case Track:
 			case Absorber:
+			case Slider:
 				addSquare(x, y, sizeRate);
 				break;
 			case Circle:

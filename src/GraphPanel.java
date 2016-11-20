@@ -35,13 +35,7 @@ public class GraphPanel extends JPanel {
 	private toolBoxPanel dataSource;
 
 	public GraphPanel() {
-		requestFocus();
-		world = new World(gravity);
-		Gizmo.setWorld(world);
-		Gizmo.setRowNum(rowNum);
-		for (int i = 0; i <= 1; i++)
-			for (int j = 0; j <= 1; j++)
-				Gizmo.addSingleBoarder(i, j);
+		newWorld();
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -93,6 +87,15 @@ public class GraphPanel extends JPanel {
 				requestFocus();
 			}
 		});
+	}
+
+	public void newWorld() {
+		world = new World(gravity);
+		Gizmo.setWorld(world);
+		Gizmo.setRowNum(rowNum);
+		for (int i = 0; i <= 1; i++)
+			for (int j = 0; j <= 1; j++)
+				Gizmo.addSingleBoarder(i, j);
 	}
 
 	public boolean canAdd(int x, int y, int size) {
@@ -339,15 +342,24 @@ public class GraphPanel extends JPanel {
 	}
 
 	public void newScene() {
+		newWorld();
 		components.clear();
 		updateScreen();
 	}
 
-	public void saveScene(){
-
+	public void saveScene(String fileName) {
+		FileIO.save(components, fileName);
 	}
 
-	public void loadScene(){
-
+	public void loadScene(String fileName) {
+		World bworld = world;
+		newWorld();
+		java.util.List<Gizmo> list = FileIO.load(fileName);
+		if (components == null) {
+			world = bworld;
+		} else {
+			components = list;
+		}
+		updateScreen();
 	}
 }

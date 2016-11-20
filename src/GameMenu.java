@@ -31,16 +31,18 @@ public class GameMenu extends JMenuBar {
 			JFileChooser chooser = new JFileChooser();
 			chooser.showSaveDialog(this);
 			File file = chooser.getSelectedFile();
-			String fileName = file.getName();
+			String fileName = file.getAbsolutePath();
 			if (!fileName.endsWith(".psc")) {
 				fileName += ".psc";
 			}
-			System.out.println(file.getAbsoluteFile());
+			panel.saveScene(fileName);
 		});
 		loadItem.addActionListener(e -> {
 			JFileChooser chooser = new JFileChooser();
 			chooser.setFileFilter(new PinballFileFilter());
 			chooser.showOpenDialog(this);
+			File file = chooser.getSelectedFile();
+			panel.loadScene(file.getAbsolutePath());
 		});
 	}
 
