@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class toolBoxPanel extends JPanel {
     enum mode {
-        gizmo, rotate, delete
+        gizmo, rotate, delete, move
     }
 
     enum rotation {
@@ -53,23 +53,34 @@ public class toolBoxPanel extends JPanel {
         basicLabel.setBounds(0, 120, 70, 30);
         add(basicLabel);
 
+        JLabel segmentation=new JLabel("----------------");
+        segmentation.setBounds(0,140,70,10);
+        add(segmentation);
+
         JLabel advancedLabel = new JLabel("Advanced", JLabel.CENTER);
         Font advancedLabelFont = new Font("等线light", Font.ITALIC, 12);
         advancedLabel.setFont(advancedLabelFont);
-        advancedLabel.setBounds(0, 390, 70, 30);
+        advancedLabel.setBounds(0, 420, 70, 30);
         add(advancedLabel);
 
         JLabel operationLabel = new JLabel("Operation", JLabel.CENTER);
         Font operationLabelFont = new Font("等线light", Font.ITALIC, 12);
         operationLabel.setFont(operationLabelFont);
-        operationLabel.setBounds(0, 560, 70, 30);
+        operationLabel.setBounds(0, 780, 70, 30);
         add(operationLabel);
+
+        JLabel sizeLabel = new JLabel("Adjust Size", JLabel.CENTER);
+        Font sizeLabelFont = new Font("等线light", Font.ITALIC, 12);
+        sizeLabel.setFont(sizeLabelFont);
+        sizeLabel.setBounds(0, 630, 70, 30);
+        add(sizeLabel);
 
         //更改游戏模式，开始游戏，暂停游戏切换回Build Model
         playButton = new JButton("Play!");
         Font font = new Font("等线light", Font.BOLD, 12);
         playButton.setFont(font);
-        playButton.setBounds(0, 520, 70, 30);
+        playButton.setBounds(0, 750, 70, 30);
+        playButton.setToolTipText("Start Gizmo!");
         add(playButton);
         buildMode = true;
         //playButton的鼠标事件
@@ -91,12 +102,14 @@ public class toolBoxPanel extends JPanel {
         circleButton.setShape(GraphPanel.Shape.Ball);
         circleButton.setGizmoColor(Color.green);
         add(circleButton);
+        circleButton.setToolTipText("Create a ball component on the panel.");
 
         ToolBoxButton boxButton = new ToolBoxButton(new ImageIcon("PinballRes/square.png"));
         boxButton.setBounds(40, 0, 30, 30);
         add(boxButton);
         boxButton.setShape(GraphPanel.Shape.Rectangle);
         boxButton.setGizmoColor(Color.BLUE);
+        boxButton.setToolTipText("Create a blue rectangle on the panel.");
 
         ToolBoxButton purpleCircleButton = new ToolBoxButton(new ImageIcon("PinballRes/Purple_Circle.png"));
         purpleCircleButton.setBounds(0, 40, 30, 30);
@@ -150,14 +163,14 @@ public class toolBoxPanel extends JPanel {
         downPaddleButton.setRotate(rotation.right);
 
         ToolBoxButton rotateButton = new ToolBoxButton(new ImageIcon("PinballRes/rotateButtonIcon.png"));
-        rotateButton.setBounds(0, 440, 70, 30);
+        rotateButton.setBounds(0, 670, 70, 30);
         add(rotateButton);
         rotateButton.addActionListener(e -> {
             curmode = mode.rotate;
         });
 
         ToolBoxButton deleteButton = new ToolBoxButton(new ImageIcon("PinballRes/Delete_Button.png"));
-        deleteButton.setBounds(0, 480, 70, 30);
+        deleteButton.setBounds(0, 710, 70, 30);
         add(deleteButton);
         deleteButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -165,6 +178,17 @@ public class toolBoxPanel extends JPanel {
                 curmode = mode.delete;
             }
         });
+
+        ToolBoxButton movePaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/planeMovePaddle.png"));
+        movePaddleButton.setBounds(0, 390, 70, 30);
+        add(movePaddleButton);
+        movePaddleButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                curmode = mode.move;
+            }
+        });
+
 
         SpinnerModel model = new SpinnerNumberModel(1, 1, 5, 1);
         JSpinner spinner = new JSpinner(model);
