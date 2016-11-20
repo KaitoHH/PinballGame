@@ -154,21 +154,21 @@ public class MJWTest2 extends TestbedTest {
 		int size = 1;
 
 		BodyDef def = new BodyDef();
-		def.type = BodyType.DYNAMIC;
+		def.type = BodyType.STATIC;
 		def.gravityScale = 100;
 		def.position.set(x * size + 0.875f * size, y * size - size);
 		Body body = getWorld().createBody(def);
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(0.125f * size, size);
 		body.createFixture(shape, 2.0f);
-
+/*
 		RevoluteJointDef rjd = new RevoluteJointDef();
 		rjd.initialize(ground, body, new Vec2(x * size + 0.875f * size, y * size));
 		rjd.upperAngle = 0;
 		rjd.lowerAngle = -(float) (Math.PI / 2.0);
 		rjd.enableLimit = true;
 		getWorld().createJoint(rjd);
-
+*/
 		myThread thread = new myThread();
 		thread.setBody(body);
 		thread.start();
@@ -191,7 +191,13 @@ public class MJWTest2 extends TestbedTest {
 		public void run() {
 			int x = 3, y = 3, size = 1;
 			while (true) {
-				body.applyForce(new Vec2(10000f, 0), new Vec2(x * size + 0.875f * size, (y - 2) * size));
+				Vec2 position = body.getPosition();
+				body.setTransform(new Vec2(position.x - 1, position.y), 0);
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
