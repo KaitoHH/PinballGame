@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import java.io.File;
 
 /**
  * Project: PinballGame
@@ -23,7 +25,31 @@ public class GameMenu extends JMenuBar {
 		add(aboutMenu);
 
 		newItem.addActionListener(e -> System.out.println("new"));
+		saveItem.addActionListener(e -> {
+			JFileChooser chooser = new JFileChooser();
+			chooser.showSaveDialog(this);
+			File file = chooser.getSelectedFile();
+			System.out.println(file.getAbsoluteFile());
+		});
+		loadItem.addActionListener(e -> {
+			JFileChooser chooser = new JFileChooser();
+			chooser.setFileFilter(new PinballFileFilter());
+			chooser.showOpenDialog(this);
+		});
 	}
 
+}
 
+class PinballFileFilter extends FileFilter {
+
+	@Override
+	public boolean accept(File f) {
+		if (f.isDirectory()) return true;
+		return f.getName().endsWith(".psc");
+	}
+
+	@Override
+	public String getDescription() {
+		return ".psc";
+	}
 }

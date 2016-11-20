@@ -1,10 +1,18 @@
+import javafx.scene.shape.Circle;
+import org.jbox2d.callbacks.ContactImpulse;
+import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
+import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 import java.awt.*;
+import java.util.Collections;
+
+import static com.sun.tools.javac.jvm.ByteCodes.swap;
 
 /**
  * Project: PinballGame
@@ -33,6 +41,37 @@ public class Gizmo {
 
 	public static void setWorld(World world) {
 		Gizmo.world = world;
+		Gizmo.world.setContactListener(new ContactListener() {
+			@Override
+			public void beginContact(Contact contact) {
+				Body body1 = contact.getFixtureA().getBody();
+				Body body2 = contact.getFixtureB().getBody();
+				if (body2.getUserData() == GraphPanel.Shape.Ball) {
+					Body b = body1;
+					body1 = body2;
+					body2 = b;
+				}
+				if (body1.getUserData() == GraphPanel.Shape.Ball && body2.getUserData() == GraphPanel.Shape.Absorber) {
+					body1.setUserData(null);
+					Gizmo.world.destroyBody(body1);
+				}
+			}
+
+			@Override
+			public void endContact(Contact contact) {
+
+			}
+
+			@Override
+			public void preSolve(Contact contact, Manifold manifold) {
+
+			}
+
+			@Override
+			public void postSolve(Contact contact, ContactImpulse contactImpulse) {
+
+			}
+		});
 	}
 
 	public static int getLength() {
@@ -64,6 +103,7 @@ public class Gizmo {
 				break;
 			case Rectangle:
 			case Track:
+			case Absorber:
 				addSquare(x, y, sizeRate);
 				break;
 			case Circle:
@@ -76,6 +116,7 @@ public class Gizmo {
 				addPaddle(x, y);
 				break;
 		}
+		body.setUserData(shape);
 	}
 
 	public void updateBody() {
@@ -212,7 +253,6 @@ public class Gizmo {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		/*FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = circle;
 		fixtureDef.restitution = 0.8f;
@@ -269,5 +309,6 @@ public class Gizmo {
 	}
 
 	public void applyForce() {
+		body.applyAngularImpulse(10000.0f * (getRotate() == toolBoxPanel.rotation.left ? -1 : 1));
 	}
 }

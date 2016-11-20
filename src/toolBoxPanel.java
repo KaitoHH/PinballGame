@@ -88,7 +88,7 @@ public class toolBoxPanel extends JPanel {
         ToolBoxButton blankButton = new ToolBoxButton(new ImageIcon("PinballRes/White_Blank.png"));
         blankButton.setBounds(40, 40, 30, 30);
         add(blankButton);
-        blankButton.setShape(GraphPanel.Shape.Rectangle);
+        blankButton.setShape(GraphPanel.Shape.Absorber);
         blankButton.setGizmoColor(Color.WHITE);
 
         ToolBoxButton rctangleButton = new ToolBoxButton(new ImageIcon("PinballRes/Ruler_Triangle_E.png"));

@@ -1,5 +1,9 @@
+import org.jbox2d.callbacks.ContactImpulse;
+import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.collision.Manifold;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +25,7 @@ public class GraphPanel extends JPanel {
 	private World world;
 
 	enum Shape {
-		Triangle, Rectangle, Circle, Paddle, Ball, Track
+		Triangle, Rectangle, Circle, Paddle, Ball, Track, Absorber
 	}
 
 	private final static int rowNum = 20;
@@ -31,6 +35,7 @@ public class GraphPanel extends JPanel {
 	private toolBoxPanel dataSource;
 
 	public GraphPanel() {
+		requestFocus();
 		world = new World(gravity);
 		Gizmo.setWorld(world);
 		Gizmo.setRowNum(rowNum);
@@ -59,6 +64,12 @@ public class GraphPanel extends JPanel {
 					if (gizmo != null) {
 						gizmo.setAngle(gizmo.getAngle() + Math.PI / 2);
 						gizmo.updateBody();
+					}
+				} else if (dataSource.curmode == toolBoxPanel.mode.delete) {
+					Gizmo gizmo = getGizmo(x, y);
+					if (gizmo != null) {
+						world.destroyBody(gizmo.getBody());
+						components.remove(gizmo);
 					}
 				}
 
@@ -146,6 +157,12 @@ public class GraphPanel extends JPanel {
 		int sizeRate;
 		for (int i = 0; i < components.size(); i++) {
 			Gizmo gizmo = components.get(i);
+			if (gizmo.getBody().getUserData() == null) {
+				world.destroyBody(gizmo.getBody());
+				components.remove(gizmo);
+				i--;
+				continue;
+			}
 			g2D.setColor(gizmo.getColor());
 			x = gizmo.getX();
 			y = gizmo.getY();
@@ -196,6 +213,7 @@ public class GraphPanel extends JPanel {
 					break;
 				case Rectangle:
 				case Track:
+				case Absorber:
 					g2D.fill(paintSquare(px, py, sizeRate));
 					break;
 				case Circle:
