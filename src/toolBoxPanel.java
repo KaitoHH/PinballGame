@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class toolBoxPanel extends JPanel {
     enum mode {
-        gizmo, rotate,delete
+        gizmo, rotate, delete
     }
 
     enum rotation {
@@ -46,11 +46,30 @@ public class toolBoxPanel extends JPanel {
 
     public toolBoxPanel(GraphPanel panel) {
         setLayout(null);
+
+        JLabel basicLabel = new JLabel("Basic", JLabel.CENTER);
+        Font basicLabelFont = new Font("等线light", Font.ITALIC, 12);
+        basicLabel.setFont(basicLabelFont);
+        basicLabel.setBounds(0, 120, 70, 30);
+        add(basicLabel);
+
+        JLabel advancedLabel = new JLabel("Advanced", JLabel.CENTER);
+        Font advancedLabelFont = new Font("等线light", Font.ITALIC, 12);
+        advancedLabel.setFont(advancedLabelFont);
+        advancedLabel.setBounds(0, 390, 70, 30);
+        add(advancedLabel);
+
+        JLabel operationLabel = new JLabel("Operation", JLabel.CENTER);
+        Font operationLabelFont = new Font("等线light", Font.ITALIC, 12);
+        operationLabel.setFont(operationLabelFont);
+        operationLabel.setBounds(0, 560, 70, 30);
+        add(operationLabel);
+
         //更改游戏模式，开始游戏，暂停游戏切换回Build Model
         playButton = new JButton("Play!");
-        Font font = new Font("等线light", Font.ITALIC, 12);
+        Font font = new Font("等线light", Font.BOLD, 12);
         playButton.setFont(font);
-        playButton.setBounds(0, 400, 70, 30);
+        playButton.setBounds(0, 520, 70, 30);
         add(playButton);
         buildMode = true;
         //playButton的鼠标事件
@@ -83,13 +102,14 @@ public class toolBoxPanel extends JPanel {
         purpleCircleButton.setBounds(0, 40, 30, 30);
         add(purpleCircleButton);
         purpleCircleButton.setShape(GraphPanel.Shape.Circle);
-        purpleCircleButton.setGizmoColor(Color.PINK);
+        purpleCircleButton.setGizmoColor(Color.MAGENTA);
 
-        ToolBoxButton blankButton = new ToolBoxButton(new ImageIcon("PinballRes/White_Blank.png"));
-        blankButton.setBounds(40, 40, 30, 30);
+        ToolBoxButton blankButton = new ToolBoxButton(new ImageIcon("PinballRes/Absorber_Icon.png"));
+        blankButton.setBounds(0, 310, 70, 70);
         add(blankButton);
         blankButton.setShape(GraphPanel.Shape.Absorber);
         blankButton.setGizmoColor(Color.WHITE);
+        blankButton.setToolTipText("This button let you create an absorber on the panel. Read the documents for more details...");
 
         ToolBoxButton rctangleButton = new ToolBoxButton(new ImageIcon("PinballRes/Ruler_Triangle_E.png"));
         rctangleButton.setBounds(0, 80, 30, 30);
@@ -104,25 +124,25 @@ public class toolBoxPanel extends JPanel {
         redCircleButton.setGizmoColor(Color.RED);
 
         ToolBoxButton grayButton = new ToolBoxButton(new ImageIcon("PinballRes/Gray_Circle.png"));
-        grayButton.setBounds(0, 120, 30, 30);
+        grayButton.setBounds(40, 40, 30, 30);
         add(grayButton);
         grayButton.setGizmoColor(Color.GRAY);
         grayButton.setShape(GraphPanel.Shape.Circle);
 
-        ToolBoxButton planePaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/stick.png"));
+        ToolBoxButton planePaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/Plane_Paddle.png"));
         planePaddleButton.setBounds(0, 160, 70, 30);
         add(planePaddleButton);
         planePaddleButton.setShape(GraphPanel.Shape.Track);
         planePaddleButton.setGizmoColor(Color.ORANGE);
 
-        ToolBoxButton upPaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/stick2.png"));
+        ToolBoxButton upPaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/leftUpPaddle.png"));
         upPaddleButton.setBounds(0, 210, 70, 30);
         add(upPaddleButton);
-        upPaddleButton.setGizmoColor(Color.yellow);
+        upPaddleButton.setGizmoColor(Color.YELLOW);
         upPaddleButton.setShape(GraphPanel.Shape.Paddle);
         upPaddleButton.setRotate(rotation.left);
 
-        ToolBoxButton downPaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/stick_1.png"));
+        ToolBoxButton downPaddleButton = new ToolBoxButton(new ImageIcon("PinballRes/rightUpPaddle.png"));
         downPaddleButton.setBounds(0, 260, 70, 30);
         add(downPaddleButton);
         downPaddleButton.setGizmoColor(Color.YELLOW);
@@ -156,7 +176,7 @@ public class toolBoxPanel extends JPanel {
             sizeRate = (int) spinner.getValue();
             textField.setText(spinner.getValue().toString());
         });
-        spinner.setBounds(0, 300, 70, 30);
+        spinner.setBounds(0, 600, 70, 30);
         add(spinner);
 
         //将button组成一个队列，方便重载button类的属性
