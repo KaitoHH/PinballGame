@@ -11,5 +11,14 @@
     <orderEntry type="library" name="org.jbox2d:jbox2d-library:2.2.1.1" level="project" />
     <orderEntry type="library" name="org.jbox2d:jbox2d-testbed:2.2.1.1" level="project" />
     <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="module-library" exported="" scope="PROVIDED">
+      <library>
+        <CLASSES />
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/PinballRes" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

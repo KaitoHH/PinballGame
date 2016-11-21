@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import java.awt.event.ActionEvent;
 import java.io.File;
 
 /**
@@ -13,15 +14,20 @@ public class GameMenu extends JMenuBar {
 	public GameMenu(GraphPanel panel) {
 		JMenu fileMenu = new JMenu("文件");
 		JMenu aboutMenu = new JMenu("帮助");
+		JMenu optionMenu = new JMenu("设置");
 		JMenuItem newItem = new JMenuItem("新建");
 		JMenuItem saveItem = new JMenuItem("保存");
 		JMenuItem loadItem = new JMenuItem("载入");
 		JMenuItem aboutItem = new JMenuItem("关于");
+		JCheckBoxMenuItem moveItem = new JCheckBoxMenuItem("碰撞位移");
+		moveItem.setState(true);
+		optionMenu.add(moveItem);
 		fileMenu.add(newItem);
 		fileMenu.add(saveItem);
 		fileMenu.add(loadItem);
 		aboutMenu.add(aboutItem);
 		add(fileMenu);
+		add(optionMenu);
 		add(aboutMenu);
 
 		newItem.addActionListener(e -> {
@@ -47,6 +53,13 @@ public class GameMenu extends JMenuBar {
 			File file = chooser.getSelectedFile();
 			panel.loadScene(file.getAbsolutePath());
 			panel.setCanFocus(true);
+		});
+		moveItem.addActionListener(new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				boolean state = ((JCheckBoxMenuItem) e.getSource()).getState();
+				Gizmo.setMove(state);
+			}
 		});
 	}
 

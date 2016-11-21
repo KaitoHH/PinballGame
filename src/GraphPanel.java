@@ -78,6 +78,7 @@ public class GraphPanel extends JPanel {
 		addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				int code = e.getKeyCode();
 				if (dataSource.isBuildMode()) return;
 				if (e.getKeyChar() == ' ') {
 					for (Gizmo gizmo : components) {
@@ -85,10 +86,25 @@ public class GraphPanel extends JPanel {
 							gizmo.applyForce();
 						}
 					}
-				} else if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				} else if (code == KeyEvent.VK_LEFT || code == KeyEvent.VK_RIGHT || code == KeyEvent.VK_UP || code == KeyEvent.VK_DOWN) {
+						int dx = 0, dy = 0;
+						switch (code) {
+							case KeyEvent.VK_LEFT:
+								dx = -5;
+								break;
+							case KeyEvent.VK_RIGHT:
+								dx = 5;
+								break;
+							case KeyEvent.VK_UP:
+								dy = 5;
+								break;
+							case KeyEvent.VK_DOWN:
+								dy = -5;
+								break;
+						}
 					for (Gizmo gizmo : components) {
 						if (gizmo.getShape() == Shape.Slider) {
-							gizmo.move(e.getKeyCode() == KeyEvent.VK_LEFT ? -5 : 5);
+							gizmo.move(dx, dy);
 						}
 					}
 				}

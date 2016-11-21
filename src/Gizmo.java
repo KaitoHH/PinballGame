@@ -71,6 +71,10 @@ public class Gizmo {
 		});
 	}
 
+	public static void setMove(boolean f) {
+		move = f ? BodyType.DYNAMIC : BodyType.STATIC;
+	}
+
 	public static int getLength() {
 		return size * rowNum;
 	}
@@ -321,8 +325,8 @@ public class Gizmo {
 		body.applyAngularImpulse(10000.0f * (getRotate() == toolBoxPanel.rotation.left ? -1 : 1));
 	}
 
-	public void move(int direction) {
+	public void move(int dx, int dy) {
 		Vec2 position = body.getPosition();
-		body.setTransform(new Vec2(position.x + direction, position.y), 0);
+		body.setTransform(new Vec2(position.x + dx, position.y + dy), 0);
 	}
 }
