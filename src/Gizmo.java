@@ -1,5 +1,3 @@
-import com.sun.xml.internal.ws.developer.Serialization;
-import javafx.scene.shape.Circle;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
@@ -9,12 +7,9 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
+import sun.security.util.PolicyUtil;
 
 import java.awt.*;
-import java.io.Serializable;
-import java.util.Collections;
-
-import static com.sun.tools.javac.jvm.ByteCodes.swap;
 
 /**
  * Project: PinballGame
@@ -106,8 +101,10 @@ public class Gizmo {
 			case Rectangle:
 			case Track:
 			case Absorber:
-			case Slider:
 				addSquare(x, y, sizeRate);
+				break;
+			case Slider:
+				addSlider(x, y, sizeRate);
 				break;
 			case Circle:
 				addCircle(x, y, sizeRate);
@@ -220,6 +217,19 @@ public class Gizmo {
 		body.createFixture(fixtureDef);
 	}
 
+	private void addSlider(int x, int y, int sizeRate) {
+		y = 20 - y;
+		BodyDef def = new BodyDef();
+		def.type = BodyType.STATIC;
+		def.position.set(x * size + size / 2.0f, y * size - size * 0.875f);
+		body = world.createBody(def);
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox(0.5f * size, 0.125f * size);
+		FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = shape;
+		fixtureDef.restitution = 1.5f;
+		body.createFixture(fixtureDef);
+	}
 
 	private void addCircle(int x, int y, int sizeRate) {
 		y = 20 - y;
@@ -256,10 +266,6 @@ public class Gizmo {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		/*FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = circle;
-		fixtureDef.restitution = 0.8f;
-		body.createFixture(fixtureDef);*/
 	}
 
 	private void addPaddle(int x, int y) {
@@ -315,4 +321,8 @@ public class Gizmo {
 		body.applyAngularImpulse(10000.0f * (getRotate() == toolBoxPanel.rotation.left ? -1 : 1));
 	}
 
+	public void move(int direction) {
+		Vec2 position = body.getPosition();
+		body.setTransform(new Vec2(position.x + direction, position.y), 0);
+	}
 }
