@@ -96,7 +96,7 @@ public class toolBoxPanel extends JPanel {
         ToolBoxButton circleButton = new ToolBoxButton(new ImageIcon("PinballRes/1.png"));
         circleButton.setBounds(0, 40, 30, 30);
         circleButton.setShape(GraphPanel.Shape.Ball);
-        circleButton.setGizmoColor(Color.green);
+        circleButton.setGizmoColor(new Color(104, 123, 76));
         add(circleButton);
         circleButton.setToolTipText("Create a ball component on the panel.");
 
@@ -105,14 +105,14 @@ public class toolBoxPanel extends JPanel {
         boxButton.setBounds(40, 40, 30, 30);
         add(boxButton);
         boxButton.setShape(GraphPanel.Shape.Rectangle);
-        boxButton.setGizmoColor(Color.BLUE);
+        boxButton.setGizmoColor(new Color(0, 183, 238));
         boxButton.setToolTipText("Create a blue rectangle on the panel.");
 
         ToolBoxButton purpleCircleButton = new ToolBoxButton(new ImageIcon("PinballRes/Purple_Circle.png"));
         purpleCircleButton.setBounds(0, 80, 30, 30);
         add(purpleCircleButton);
         purpleCircleButton.setShape(GraphPanel.Shape.Circle);
-        purpleCircleButton.setGizmoColor(Color.MAGENTA);
+        purpleCircleButton.setGizmoColor(new Color(144, 0, 255));
 
         ToolBoxButton blankButton = new ToolBoxButton(new ImageIcon("PinballRes/Absorber_Icon.png"));
         blankButton.setBounds(0, 320, 70, 70);
