@@ -61,6 +61,9 @@ public class GameMenu extends JMenuBar {
 				Gizmo.setMove(state);
 			}
 		});
+		aboutItem.addActionListener(e -> {
+			new AboutDialog();
+		});
 	}
 
 }
