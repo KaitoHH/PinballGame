@@ -93,10 +93,10 @@ public class toolBoxPanel extends JPanel {
             }
         });
 
-        ToolBoxButton circleButton = new ToolBoxButton(new ImageIcon("PinballRes/1.png"));
+        ToolBoxButton circleButton = new ToolBoxButton(new ImageIcon("PinballRes/Green_Cycle.png"));
         circleButton.setBounds(0, 40, 30, 30);
         circleButton.setShape(GraphPanel.Shape.Ball);
-        circleButton.setGizmoColor(new Color(104, 123, 76));
+        circleButton.setGizmoColor(Color.GREEN);
         add(circleButton);
         circleButton.setToolTipText("Create a ball component on the panel.");
 
