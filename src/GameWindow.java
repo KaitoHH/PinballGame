@@ -20,7 +20,7 @@ public class GameWindow {
 	private toolBoxPanel toolPanel;
 
 	public static void main(String[] args) {
-		GameWindow gameWindow = new GameWindow();
+		new GameWindow();
 	}
 
 	public GameWindow() {
@@ -38,13 +38,10 @@ public class GameWindow {
 
 		JFrame frame = new JFrame("GameWindow");
 		frame.setJMenuBar(new GameMenu(graphPanel));
-		frame.setSize(800, 800);
+		frame.setSize(796, 738);
 		frame.setContentPane(panel1);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
 
-	public void draw() {
-		graphPanel.build();
-	}
 }
