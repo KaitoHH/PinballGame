@@ -32,6 +32,10 @@ public class FileIO {
 		List<Gizmo> components = new ArrayList<>();
 		for (FileGizmo g : list) {
 			Gizmo gizmo = new Gizmo(g.getX(), g.getY(), g.getSizeRate(), g.getShape(), g.getColor(), g.getRotate());
+			if (g.getAngle() != 0) {
+				gizmo.setAngle(g.getAngle());
+				gizmo.updateBody();
+			}
 			components.add(gizmo);
 		}
 		return components;
